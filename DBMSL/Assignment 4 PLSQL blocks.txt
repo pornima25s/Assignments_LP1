@@ -1,0 +1,137 @@
+Assignment 4
+
+Problem statement
+Unnamed PL/SQL code block: Use of Control structure and Exception handling is mandatory. Write a PL/SQL block of code for the following requirements:-
+Schema:
+⦁ Borrower(Roll,Name,DateofIssue, NameofBook, Status)
+⦁ Fine (Roll, Date, Amt)
+ Accept Roll & N ame of book from user.
+ Check the number of days (from date of issue), if days
+are between 15 to 30 then fine amount will be Rs 5per day.
+ If no. of days>30, per day fine will be Rs 50 per day &
+for days less than 30, Rs. 5 per day.
+ After submitting the book, status will change from I to R.
+ If condition of fine is true, then details will be stored into fine table.
+Frame the problem statement for writing PL/SQL block
+inline with above statement.
+
+
+
+mysql> CREATE TABLE Borrower (
+    ->     Roll_no INT(11) NOT NULL PRIMARY KEY,
+    ->     Name VARCHAR(30),
+    ->     DOI DATE,
+    ->     Book_name VARCHAR(30),
+    ->     Status VARCHAR(5)
+    -> );
+Query OK, 0 rows affected, 1 warning (0.23 sec)
+
+mysql> CREATE TABLE Fine (
+    ->     Roll_no INT(11) NOT NULL PRIMARY KEY,
+    ->     Date DATE,
+    ->     Amt INT(11)
+    -> );
+Query OK, 0 rows affected, 2 warnings (0.03 sec)
+
+mysql> INSERT INTO Borrower (Roll_no, Name, DOI, Book_name, Status)
+    -> VALUES
+    -> (101, 'Jack', '2024-06-01', 'Book A', 'I'),
+    -> (102, 'Jones', '2024-07-15', 'Book B', 'I'),
+    -> (103, 'Harry', '2024-06-20', 'Book C', 'I'),
+    -> (104, 'Potter', '2024-07-10', 'Book D', 'I'),
+    -> (105, 'Dr Doom', '2024-06-25', 'Book E', 'I');
+Query OK, 5 rows affected (0.03 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Fine (Roll_no, Date, Amt)
+    -> VALUES
+    -> (101, '2024-08-01', 750),
+    -> (103, '2024-08-01', 1000),
+    -> (105, '2024-08-01', 500);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+
+
+
+mysql>
+mysql> DELIMITER //
+mysql>
+mysql> CREATE PROCEDURE Book_Return(IN ROLLNO INT, IN BOOKNM VARCHAR(244))
+    -> BEGIN
+    ->     DECLARE ISSUEDATE DATE;
+    ->     DECLARE DAYSISSUED INT;
+    ->     DECLARE FINEAMOUNT INT DEFAULT 0;
+    ->     DECLARE EXISTS_CHECK INT DEFAULT 0;
+    ->
+    ->     -- Get the date of issue for the book
+    ->     SELECT DOI INTO ISSUEDATE
+    ->     FROM Borrower
+    ->     WHERE Roll_no = ROLLNO AND Book_name = BOOKNM AND STATUS = 'I';
+    ->
+    ->     -- Calculate the number of days since the book was issued
+    ->     SET DAYSISSUED = DATEDIFF(CURDATE(), ISSUEDATE);
+    ->
+    ->     -- Calculate the fine amount based on the number of days issued
+    ->     IF DAYSISSUED > 30 THEN
+    ->         SET FINEAMOUNT = (DAYSISSUED - 30) * 50 + 15 * 5; -- Rs. 50 per day for days > 30
+    ->     ELSEIF DAYSISSUED > 15 THEN
+    ->         SET FINEAMOUNT = DAYSISSUED * 5; -- Rs. 5 per day for days between 15 and 30
+    ->     END IF;
+    ->
+    ->     -- Update the status of the book to 'R'
+    ->     UPDATE Borrower
+    ->     SET Status = 'R'
+    ->     WHERE Roll_no = ROLLNO AND Book_name = BOOKNM AND Status = 'I';
+    ->
+    ->     -- Check if a fine record already exists for this ROLLNO and current date
+    ->     SELECT COUNT(*) INTO EXISTS_CHECK
+    ->     FROM Fine
+    ->     WHERE Roll_no = ROLLNO AND Date = CURDATE();
+    ->
+    ->     -- If a fine record exists, update it
+    ->     IF EXISTS_CHECK > 0 THEN
+    ->         UPDATE Fine
+    ->         SET Amt = FINEAMOUNT
+    ->         WHERE Roll_no = ROLLNO AND Date = CURDATE();
+    ->     ELSE
+    ->         -- If no fine record exists, insert a new one
+    ->         INSERT INTO Fine (Roll_no, Date, Amt)
+    ->         VALUES (ROLLNO, CURDATE(), FINEAMOUNT);
+    ->     END IF;
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.27 sec)
+
+mysql>
+mysql> DELIMITER ;
+
+
+
+mysql>  call Book_Return(103,"BOOK C");
+ERROR 1062 (23000): Duplicate entry '103' for key 'fine.PRIMARY'
+mysql> SELECT * FROM Borrower;
++---------+---------+------------+-----------+--------+
+| Roll_no | Name    | DOI        | Book_name | Status |
++---------+---------+------------+-----------+--------+
+|     101 | Jack    | 2024-06-01 | Book A    | I      |
+|     102 | Jones   | 2024-07-15 | Book B    | I      |
+|     103 | Harry   | 2024-06-20 | Book C    | R      |
+|     104 | Potter  | 2024-07-10 | Book D    | I      |
+|     105 | Dr Doom | 2024-06-25 | Book E    | I      |
++---------+---------+------------+-----------+--------+
+5 rows in set (0.01 sec)
+
+mysql> SELECT * FROM Fine;
++---------+------------+------+
+| Roll_no | Date       | Amt  |
++---------+------------+------+
+|     101 | 2024-08-01 |  750 |
+|     103 | 2024-08-01 | 1000 |
+|     105 | 2024-08-01 |  500 |
++---------+------------+------+
+3 rows in set (0.00 sec)
+
+mysql>
+
+

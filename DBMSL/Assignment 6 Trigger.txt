@@ -1,0 +1,271 @@
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.15 sec)
+
+mysql> show tables;
+ERROR 1046 (3D000): No database selected
+mysql> create database ground;
+Query OK, 1 row affected (0.13 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| ground             |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.01 sec)
+
+mysql> drop database ground;
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.00 sec)
+
+mysql> CREATE DATABASE IF NOT EXISTS te31475_db;
+Query OK, 1 row affected (0.15 sec)
+
+mysql> use te31475_db;
+Database changed
+
+mysql> CREATE TABLE Library (
+    ->     id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     book_name VARCHAR(100),
+    ->     available_copies INT
+    -> );
+Query OK, 0 rows affected (0.21 sec)
+
+mysql> CREATE TABLE Library_Audit (
+    ->     audit_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     book_id INT,
+    ->     old_book_name VARCHAR(100),
+    ->     old_available_copies INT,
+    ->     action VARCHAR(10),
+    ->     change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+
+mysql> DELIMITER //
+mysql>
+mysql> -- Create the trigger
+mysql> CREATE TRIGGER before_library_update
+    -> BEFORE UPDATE ON Library
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     -- Insert the old values into Library_Audit before the update
+    ->     INSERT INTO Library_Audit (book_id, old_book_name, old_available_copies, action)
+    ->     VALUES (OLD.id, OLD.book_name, OLD.available_copies, 'UPDATE');
+    -> END; //
+Query OK, 0 rows affected (0.07 sec)
+
+mysql>
+mysql> -- Reset the delimiter to ;
+mysql> DELIMITER ;
+mysql> DELIMITER //
+mysql>
+mysql> CREATE TRIGGER before_library_delete
+    -> BEFORE DELETE ON Library
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     -- Insert the old values into Library_Audit before the deletion
+    ->     INSERT INTO Library_Audit (book_id, old_book_name, old_available_copies, action)
+    ->     VALUES (OLD.id, OLD.book_name, OLD.available_copies, 'DELETE');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DELIMITER ;
+
+mysql> INSERT INTO Library (book_name, available_copies) VALUES ('Database Systems', 10);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> INSERT INTO Library (book_name, available_copies) VALUES ('Computer Networks', 5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO Library (book_name, available_copies) VALUES ('Operating Systems', 7);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> UPDATE Library SET available_copies = 8 WHERE id = 1;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM Library;
++----+-------------------+------------------+
+| id | book_name         | available_copies |
++----+-------------------+------------------+
+|  1 | Database Systems  |                8 |
+|  2 | Computer Networks |                5 |
+|  3 | Operating Systems |                7 |
++----+-------------------+------------------+
+3 rows in set (0.01 sec)
+
+mysql> SELECT * FROM Library_Audit;
++----------+---------+------------------+----------------------+--------+---------------------+
+| audit_id | book_id | old_book_name    | old_available_copies | action | change_date         |
++----------+---------+------------------+----------------------+--------+---------------------+
+|        1 |       1 | Database Systems |                   10 | UPDATE | 2024-09-19 09:20:13 |
++----------+---------+------------------+----------------------+--------+---------------------+
+1 row in set (0.00 sec)
+
+mysql> DELETE FROM Library WHERE id = 2;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM Library;
++----+-------------------+------------------+
+| id | book_name         | available_copies |
++----+-------------------+------------------+
+|  1 | Database Systems  |                8 |
+|  3 | Operating Systems |                7 |
++----+-------------------+------------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Library_Audit;
++----------+---------+-------------------+----------------------+--------+---------------------+
+| audit_id | book_id | old_book_name     | old_available_copies | action | change_date         |
++----------+---------+-------------------+----------------------+--------+---------------------+
+|        1 |       1 | Database Systems  |                   10 | UPDATE | 2024-09-19 09:20:13 |
+|        2 |       2 | Computer Networks |                    5 | DELETE | 2024-09-19 09:21:39 |
++----------+---------+-------------------+----------------------+--------+---------------------+
+2 rows in set (0.00 sec)
+
+mysql> INSERT INTO Library (book_name, available_copies) VALUES ('Computer Networks', 5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM Library;
++----+-------------------+------------------+
+| id | book_name         | available_copies |
++----+-------------------+------------------+
+|  1 | Database Systems  |                8 |
+|  3 | Operating Systems |                7 |
+|  4 | Computer Networks |                5 |
++----+-------------------+------------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Library_Audit;
++----------+---------+-------------------+----------------------+--------+---------------------+
+| audit_id | book_id | old_book_name     | old_available_copies | action | change_date         |
++----------+---------+-------------------+----------------------+--------+---------------------+
+|        1 |       1 | Database Systems  |                   10 | UPDATE | 2024-09-19 09:20:13 |
+|        2 |       2 | Computer Networks |                    5 | DELETE | 2024-09-19 09:21:39 |
++----------+---------+-------------------+----------------------+--------+---------------------+
+2 rows in set (0.00 sec)
+
+mysql> DELIMITER //
+mysql>
+mysql> CREATE TRIGGER after_library_update
+    -> AFTER UPDATE ON Library
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     -- Insert the new values into Library_Audit after the update
+    ->     INSERT INTO Library_Audit (book_id, old_book_name, old_available_copies, action)
+    ->     VALUES (NEW.id, NEW.book_name, NEW.available_copies, 'UPDATED AFTER');
+    -> END; //
+Query OK, 0 rows affected (0.05 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql>
+mysql> DELIMITER //
+mysql>
+mysql> CREATE TRIGGER after_library_delete
+    -> AFTER DELETE ON Library
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     -- Insert the old values into Library_Audit after the deletion
+    ->     INSERT INTO Library_Audit (book_id, old_book_name, old_available_copies, action)
+    ->     VALUES (OLD.id, OLD.book_name, OLD.available_copies, 'DELETED AFTER');
+    -> END; //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql>
+mysql> DELIMITER ;
+
+mysql> ALTER TABLE Library_Audit MODIFY COLUMN action VARCHAR(20);
+Query OK, 0 rows affected (0.06 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> UPDATE Library SET available_copies = 12 WHERE id = 1;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE Library SET available_copies = 12 WHERE id = 1;
+Query OK, 0 rows affected (0.01 sec)
+Rows matched: 1  Changed: 0  Warnings: 0
+
+mysql> SELECT * FROM Library_Audit;
++----------+---------+-------------------+----------------------+---------------+---------------------+
+| audit_id | book_id | old_book_name     | old_available_copies | action        | change_date         |
++----------+---------+-------------------+----------------------+---------------+---------------------+
+|        1 |       1 | Database Systems  |                   10 | UPDATE        | 2024-09-19 09:20:13 |
+|        2 |       2 | Computer Networks |                    5 | DELETE        | 2024-09-19 09:21:39 |
+|        5 |       1 | Database Systems  |                    8 | UPDATE        | 2024-09-19 09:45:10 |
+|        6 |       1 | Database Systems  |                   12 | UPDATED AFTER | 2024-09-19 09:45:10 |
+|        7 |       1 | Database Systems  |                   12 | UPDATE        | 2024-09-19 09:51:07 |
+|        8 |       1 | Database Systems  |                   12 | UPDATED AFTER | 2024-09-19 09:51:07 |
++----------+---------+-------------------+----------------------+---------------+---------------------+
+6 rows in set (0.01 sec)
+
+mysql> DELETE FROM Library WHERE id = 3;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM Library_Audit;
++----------+---------+-------------------+----------------------+---------------+---------------------+
+| audit_id | book_id | old_book_name     | old_available_copies | action        | change_date         |
++----------+---------+-------------------+----------------------+---------------+---------------------+
+|        1 |       1 | Database Systems  |                   10 | UPDATE        | 2024-09-19 09:20:13 |
+|        2 |       2 | Computer Networks |                    5 | DELETE        | 2024-09-19 09:21:39 |
+|        5 |       1 | Database Systems  |                    8 | UPDATE        | 2024-09-19 09:45:10 |
+|        6 |       1 | Database Systems  |                   12 | UPDATED AFTER | 2024-09-19 09:45:10 |
+|        7 |       1 | Database Systems  |                   12 | UPDATE        | 2024-09-19 09:51:07 |
+|        8 |       1 | Database Systems  |                   12 | UPDATED AFTER | 2024-09-19 09:51:07 |
+|        9 |       3 | Operating Systems |                    7 | DELETE        | 2024-09-19 09:53:08 |
+|       10 |       3 | Operating Systems |                    7 | DELETED AFTER | 2024-09-19 09:53:08 |
++----------+---------+-------------------+----------------------+---------------+---------------------+
+8 rows in set (0.00 sec)
+
+mysql> SELECT *FROM Library;
++----+-------------------+------------------+
+| id | book_name         | available_copies |
++----+-------------------+------------------+
+|  1 | Database Systems  |               12 |
+|  4 | Computer Networks |                5 |
++----+-------------------+------------------+
+2 rows in set (0.00 sec)
+
+mysql> DELETE FROM Library WHERE id=4;
+Query OK, 1 row affected (0.23 sec)
+
+mysql> SELECT *FROM Library_Audit;
++----------+---------+-------------------+----------------------+---------------+---------------------+
+| audit_id | book_id | old_book_name     | old_available_copies | action        | change_date         |
++----------+---------+-------------------+----------------------+---------------+---------------------+
+|        1 |       1 | Database Systems  |                   10 | UPDATE        | 2024-09-19 09:20:13 |
+|        2 |       2 | Computer Networks |                    5 | DELETE        | 2024-09-19 09:21:39 |
+|        5 |       1 | Database Systems  |                    8 | UPDATE        | 2024-09-19 09:45:10 |
+|        6 |       1 | Database Systems  |                   12 | UPDATED AFTER | 2024-09-19 09:45:10 |
+|        7 |       1 | Database Systems  |                   12 | UPDATE        | 2024-09-19 09:51:07 |
+|        8 |       1 | Database Systems  |                   12 | UPDATED AFTER | 2024-09-19 09:51:07 |
+|        9 |       3 | Operating Systems |                    7 | DELETE        | 2024-09-19 09:53:08 |
+|       10 |       3 | Operating Systems |                    7 | DELETED AFTER | 2024-09-19 09:53:08 |
+|       11 |       4 | Computer Networks |                    5 | DELETE        | 2024-09-19 11:27:52 |
+|       12 |       4 | Computer Networks |                    5 | DELETED AFTER | 2024-09-19 11:27:52 |
++----------+---------+-------------------+----------------------+---------------+---------------------+
+10 rows in set (0.02 sec)

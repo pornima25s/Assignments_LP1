@@ -1,0 +1,250 @@
+
+mysql> CREATE TABLE source_table (
+    ->     id INT,
+    ->     name VARCHAR(50),
+    ->     value INT
+    -> );
+Query OK, 0 rows affected (0.23 sec)
+
+mysql> INSERT INTO source_table (id, name, value) VALUES (1, 'Alice', 100);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> INSERT INTO source_table (id, name, value) VALUES (2, 'Bob', 200);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO source_table (id, name, value) VALUES (3, 'Charlie', 300);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> CREATE TABLE target_table (
+    ->     id INT,
+    ->     name VARCHAR(50),
+    ->     value INT
+    -> );
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> INSERT INTO target_table (id, name, value) VALUES (1, 'Alice', 50);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> INSERT INTO target_table (id, name, value) VALUES (2, 'Bob', 150);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT *FROM target_table;
++------+-------+-------+
+| id   | name  | value |
++------+-------+-------+
+|    1 | Alice |    50 |
+|    2 | Bob   |   150 |
++------+-------+-------+
+2 rows in set (0.01 sec)
+
+mysql> SELECT *FROM source_table;
++------+---------+-------+
+| id   | name    | value |
++------+---------+-------+
+|    1 | Alice   |   100 |
+|    2 | Bob     |   200 |
+|    3 | Charlie |   300 |
++------+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> DELIMITER $$
+mysql>
+mysql> CREATE PROCEDURE merge_data()
+    -> BEGIN
+    ->     -- Declare the cursor to select data from source_table
+    ->     DECLARE done INT DEFAULT FALSE;
+    ->     DECLARE src_id INT;
+    ->     DECLARE src_name VARCHAR(50);
+    ->     DECLARE src_value INT;
+    ->
+    ->     -- Declare the cursor
+    ->     DECLARE cur CURSOR FOR
+    ->         SELECT id, name, value FROM source_table;
+    ->
+    ->     -- Declare the exit handler for the cursor
+    ->     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    ->
+    ->     -- Open the cursor
+    ->     OPEN cur;
+    ->
+    ->     -- Start the loop
+    ->     read_loop: LOOP
+    ->         -- Fetch data from the cursor
+    ->         FETCH cur INTO src_id, src_name, src_value;
+    ->
+    ->         -- Exit the loop if no more rows to fetch
+    ->         IF done THEN
+    ->             LEAVE read_loop;
+    ->         END IF;
+    ->
+    ->         -- Merge the data into the target_table
+    ->         IF EXISTS (SELECT 1 FROM target_table WHERE id = src_id) THEN
+
+    ->             -- If record exists, update it
+    ->             UPDATE target_table SET value = value + src_value WHERE id = src_id;
+    ->         ELSE
+    ->             -- If record does not exist, insert it
+    ->             INSERT INTO target_table (id, name, value) VALUES (src_id, src_name, src_value);
+    ->         END IF;
+    ->
+    ->     END LOOP;
+    ->
+    ->     -- Close the cursor
+    ->     CLOSE cur;
+    ->
+    -> END$$
+Query OK, 0 rows affected (0.06 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql>
+mysql> SELECT *FROM target_table;
++------+-------+-------+
+| id   | name  | value |
++------+-------+-------+
+|    1 | Alice |    50 |
+|    2 | Bob   |   150 |
++------+-------+-------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT *FROM source_table;
++------+---------+-------+
+| id   | name    | value |
++------+---------+-------+
+|    1 | Alice   |   100 |
+|    2 | Bob     |   200 |
+|    3 | Charlie |   300 |
++------+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> CALL merge_data();
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> SELECT *FROM target_table;
++------+---------+-------+
+| id   | name    | value |
++------+---------+-------+
+|    1 | Alice   |   150 |
+|    2 | Bob     |   350 |
+|    3 | Charlie |   300 |
++------+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT *FROM source_table;
++------+---------+-------+
+| id   | name    | value |
++------+---------+-------+
+|    1 | Alice   |   100 |
+|    2 | Bob     |   200 |
+|    3 | Charlie |   300 |
++------+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO source_table (id, name, value) VALUES (4, 'hello', 250);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT *FROM source_table;
++------+---------+-------+
+| id   | name    | value |
++------+---------+-------+
+|    1 | Alice   |   100 |
+|    2 | Bob     |   200 |
+|    3 | Charlie |   300 |
+|    4 | hello   |   250 |
++------+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT *FROM target_table;
++------+---------+-------+
+| id   | name    | value |
++------+---------+-------+
+|    1 | Alice   |   150 |
+|    2 | Bob     |   350 |
+|    3 | Charlie |   300 |
++------+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> CALL merge_data();
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> SELECT *FROM target_table;
++------+---------+-------+
+| id   | name    | value |
++------+---------+-------+
+|    1 | Alice   |   250 |
+|    2 | Bob     |   550 |
+|    3 | Charlie |   600 |
+|    4 | hello   |   250 |
++------+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> UPDATE source_table
+    -> SET value = 250
+    -> WHERE id = 2;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT *FROM source_table;
++------+---------+-------+
+| id   | name    | value |
++------+---------+-------+
+|    1 | Alice   |   100 |
+|    2 | Bob     |   250 |
+|    3 | Charlie |   300 |
+|    4 | hello   |   250 |
++------+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT *FROM target_table;
++------+---------+-------+
+| id   | name    | value |
++------+---------+-------+
+|    1 | Alice   |   250 |
+|    2 | Bob     |   550 |
+|    3 | Charlie |   600 |
+|    4 | hello   |   250 |
++------+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> CALL merge_data();
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> SELECT *FROM target_table;
++------+---------+-------+
+| id   | name    | value |
++------+---------+-------+
+|    1 | Alice   |   350 |
+|    2 | Bob     |   800 |
+|    3 | Charlie |   900 |
+|    4 | hello   |   500 |
++------+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> DELETE FROM source_table WHERE id = 1;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT *FROM source_table;
++------+---------+-------+
+| id   | name    | value |
++------+---------+-------+
+|    2 | Bob     |   250 |
+|    3 | Charlie |   300 |
+|    4 | hello   |   250 |
++------+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> CALL merge_data();
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> SELECT *FROM target_table;
++------+---------+-------+
+| id   | name    | value |
++------+---------+-------+
+|    1 | Alice   |   350 |
+|    2 | Bob     |  1050 |
+|    3 | Charlie |  1200 |
+|    4 | hello   |   750 |
++------+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql>

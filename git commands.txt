@@ -1,0 +1,23 @@
+1) Install Git (if not already installed)
+
+for Linux
+
+sudo apt-get install git
+
+for ubuntu
+
+sudo apt update
+sudo apt install git
+
+
+
+ 2) Configure Git (if not already configured)
+
+git config --global user.name "pornima25s"
+git config --global user.email "sadanshivsudhir794@gmail.com"
+
+
+
+3)  Clone a GitHub Repository
+
+git clone https://github.com/pornima25s/Assignments_LP1.git

@@ -1,0 +1,67 @@
+mysql> CREATE TABLE Stud_Marks (
+    ->  name VARCHAR(50),
+    ->  total_marks INT
+    -> );
+Query OK, 0 rows affected (0.12 sec)
+
+mysql> CREATE TABLE Result (
+    ->  roll INT AUTO_INCREMENT PRIMARY KEY,
+    ->  name VARCHAR(50),
+    ->  class VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> INSERT INTO Stud_Marks (name, total_marks) VALUES
+    -> ('Student1', 1450),
+    -> ('Student2', 980),
+    -> ('Student3', 890),
+    -> ('Student4', 850);
+Query OK, 4 rows affected (0.10 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+
+mysql>
+mysql> DELIMITER ;
+mysql>  DELIMITER //
+mysql> CREATE PROCEDURE proc_Grade()
+    -> BEGIN
+    ->  DELETE FROM Result;
+    ->
+    ->  INSERT INTO Result (name, class)
+    ->  SELECT
+    ->  name,
+    -> CASE
+    ->  WHEN total_marks BETWEEN 990 AND 1500 THEN 'Distinction'
+    ->  WHEN total_marks BETWEEN 900 AND 989 THEN 'First Class'
+    ->  WHEN total_marks BETWEEN 825 AND 899 THEN 'Higher Second Class'
+    ->  ELSE 'No Category'
+    ->  END AS class
+    ->  FROM Stud_Marks;
+    -> END //
+Query OK, 0 rows affected (0.02 sec)
+
+
+mysql> DELIMITER ;
+
+mysql> CALL proc_Grade();
+Query OK, 4 rows affected (0.03 sec)
+
+
+
+mysql> SELECT * FROM Result;
++------+----------+---------------------+
+| roll | name     | class               |
++------+----------+---------------------+
+|    8 | Student1 | Distinction         |
+|    9 | Student2 | First Class         |
+|   10 | Student3 | Higher Second Class |
+|   11 | Student4 | Higher Second Class |
++------+----------+---------------------+
+4 rows in set (0.01 sec)
+
+
+
+mysql> UPDATE Stud_Marks
+    -> SET total_marks = 890
+    -> WHERE name='Student2';
+Query OK, 2 rows affected (0.21 sec)
