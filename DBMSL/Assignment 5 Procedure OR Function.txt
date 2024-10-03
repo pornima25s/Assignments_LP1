@@ -65,3 +65,101 @@ mysql> UPDATE Stud_Marks
     -> SET total_marks = 890
     -> WHERE name='Student2';
 Query OK, 2 rows affected (0.21 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+In this SQL example, you're dealing with a MySQL database schema that manages student marks and their corresponding grade classifications. The code you've written demonstrates key SQL concepts such as:
+
+1. Table Creation:
+Two tables are created here:
+
+Stud_Marks:
+
+Stores student names and their total marks.
+Fields: name (VARCHAR) and total_marks (INT).
+Result:
+
+Stores the result with a unique roll number (auto-incremented), the student's name, and their grade classification (class).
+Fields: roll (INT, primary key), name (VARCHAR), and class (VARCHAR).
+2. INSERT INTO Statement:
+The INSERT INTO command is used to add records to the Stud_Marks table. This is a basic data insertion operation in SQL.
+3. Stored Procedure:
+A stored procedure called proc_Grade() is created to automate the process of grading students based on their total marks. Stored procedures are precompiled SQL code that can be reused, and they improve the performance of database operations.
+
+Key aspects of this procedure:
+
+Procedure Definition: The procedure proc_Grade() starts with the BEGIN and ends with END.
+
+DELETE Statement: Deletes all rows from the Result table before inserting fresh records. This ensures that the result table is updated each time the procedure is called.
+
+INSERT INTO with CASE Statement:
+
+The CASE statement is used to assign a class (grade) to each student based on their total marks.
+Marks ranges are defined as follows:
+Distinction: Marks between 990 and 1500
+First Class: Marks between 900 and 989
+Higher Second Class: Marks between 825 and 899
+No Category: For any other marks
+The INSERT INTO selects the data from the Stud_Marks table, applies the CASE conditions to determine the grade, and inserts it into the Result table.
+
+4. Calling the Procedure:
+The CALL proc_Grade(); statement executes the stored procedure, triggering the deletion of the existing data in the Result table and the insertion of updated records based on the total marks in Stud_Marks.
+
+5. SELECT Statement:
+The SELECT * FROM Result; retrieves all records from the Result table, showing the student names and their respective classes (grades).
+6. UPDATE Statement:
+The UPDATE statement is used to modify the total_marks of a specific student (Student2 in this case). It changes the total_marks from the original value (980) to 890, which places the student in a different grade category after the procedure is executed again.
+Key Theoretical Concepts:
+Stored Procedures:
+
+Stored procedures allow for encapsulation of complex SQL logic within a reusable entity. This helps in code modularity, ease of use, and can reduce round trips between the client and the server.
+Control Flow Constructs (CASE Statement):
+
+SQL uses CASE expressions to allow conditional logic inside queries. In this case, it's used to assign a grade classification based on a student's total marks.
+Triggers vs. Stored Procedures:
+
+While stored procedures are explicitly invoked by the user (as seen in CALL proc_Grade()), triggers are automatic and event-driven. In some cases, a trigger could be used for automating updates upon a table change.
+Transactions:
+
+Though not explicitly shown here, the deletion and insertion inside the procedure could be wrapped inside a transaction for atomicity, ensuring either all operations succeed or none of them.
+This example highlights how SQL can be used to automate repetitive tasks such as grading by leveraging stored procedures and conditional logic within a database management system like MySQL.

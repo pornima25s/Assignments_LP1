@@ -135,3 +135,244 @@ mysql> SELECT * FROM Fine;
 mysql>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+In your assignment, the key aspects involve using PL/SQL control structures, exception handling, and database interactions. Below is a breakdown of related concepts:
+
+1. PL/SQL Control Structures
+Control structures allow the flow of execution to be directed through the program based on conditions and looping mechanisms. In your code, the IF...THEN statement and loops play a vital role in decision-making:
+
+IF-ELSEIF-ELSE: Used to check conditions for calculating the fine. In your case, the number of days borrowed is compared against thresholds (15 and 30 days) to decide how much fine to apply.
+plsql
+Copy code
+IF DAYSISSUED > 30 THEN
+    SET FINEAMOUNT = (DAYSISSUED - 30) * 50 + 15 * 5;
+ELSEIF DAYSISSUED > 15 THEN
+    SET FINEAMOUNT = DAYSISSUED * 5;
+END IF;
+2. Exception Handling
+Exception handling in PL/SQL is crucial for capturing and managing runtime errors. In the code you've shared, one area where you may consider implementing exception handling is when interacting with the database, such as during updates or inserts. For example, if there’s an attempt to insert a duplicate record into the Fine table, an error is raised (as you've already encountered with error 1062). Using EXCEPTION handling can prevent the code from breaking and allow for graceful recovery or logging.
+
+Example structure of exception handling:
+plsql
+Copy code
+BEGIN
+    -- Code that might throw an exception
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        -- Handle duplicate value error
+    WHEN OTHERS THEN
+        -- Handle any other errors
+END;
+3. Database Operations: SELECT, INSERT, UPDATE
+Your assignment uses standard SQL operations wrapped in PL/SQL blocks. These operations include:
+
+SELECT: Retrieves the DOI (Date of Issue) from the Borrower table based on the roll number and book name.
+UPDATE: Changes the status of the book from "I" (issued) to "R" (returned) once the book is returned.
+INSERT/UPDATE: Either inserts a new fine record into the Fine table or updates an existing record.
+4. Date Functions and Fine Calculation
+You're using the DATEDIFF function to calculate the difference in days between the current date and the date of issue. Based on the number of days, the fine is calculated using a tiered system (e.g., Rs. 5/day for 15-30 days and Rs. 50/day for more than 30 days).
+
+plsql
+Copy code
+SET DAYSISSUED = DATEDIFF(CURDATE(), ISSUEDATE);
+5. Primary Key Constraint Issue
+The error you encountered (ERROR 1062: Duplicate entry for key 'fine.PRIMARY') suggests that the Fine table has a unique constraint on Roll_no. This means you cannot insert two records with the same Roll_no on the same day. You should modify the table or logic to either update an existing record or insert a new record with a different date.
+
+6. Handling Updates to Existing Fine Records
+Since the Fine table already has a primary key constraint on Roll_no, your current logic first checks if a fine record exists and then updates or inserts as necessary. This can be done more safely by handling exceptions during the INSERT operation, allowing you to avoid duplicate entry errors.
+
+By combining control structures, proper exception handling, and efficient SQL operations, you ensure that your code follows best practices for database interaction and error management.
+
+
+
+
+
+
+
+You said:
+difference between pl/sql blocks and procedure in tabular form
+
+2/2
+
+ChatGPT said:
+ChatGPT
+Here’s a comparison between PL/SQL blocks and PL/SQL procedures in tabular form:
+
+Aspect	PL/SQL Block	PL/SQL Procedure
+Definition	Anonymous or unnamed PL/SQL code executed directly.	Named and stored PL/SQL subprogram.
+Structure	Can be a single anonymous block with DECLARE, BEGIN, and EXCEPTION sections.	Defined using CREATE PROCEDURE and contains parameters.
+Reusability	Not reusable, must be rewritten or copied each time.	Reusable, can be called multiple times.
+Storage	Not stored in the database; executed once and discarded.	Stored in the database, allowing repeated execution.
+Parameters	No parameters; inputs must be handled within the block.	Supports IN, OUT, and INOUT parameters for passing values.
+Execution	Executed directly in the environment (like SQL*Plus or PL/SQL developer).	Invoked by calling it with CALL procedure_name or in a trigger.
+Naming	No name, anonymous.	Has a specific name that identifies it in the database.
+Error Handling	Can handle exceptions using the EXCEPTION block.	Same as PL/SQL block but is more structured for error handling.
+Compilation	Compiled and executed every time it runs.	Compiled once and stored; recompiled only when modified.
+Use Case	Suitable for short, single-use tasks.	Suitable for complex tasks that require reuse.
+Dependency	No dependency tracking.	Dependencies are tracked by the database.
+Performance	May have performance overhead due to recompilation.	More efficient for repeated tasks as it is precompiled.
+Transaction Control	Can include transaction control statements.	Can include transaction control, but if called within another block, follows the transaction control of the caller.
+In summary, PL/SQL blocks are best for one-time or ad-hoc execution, while PL/SQL procedures are ideal for structured, reusable code that needs to be stored and executed repeatedly.
+
+
+
+
+
+
+You said:
+related theory to pl/sql blocks
+ChatGPT said:
+ChatGPT
+PL/SQL (Procedural Language/Structured Query Language) blocks are the basic units of PL/SQL code in Oracle databases. They are self-contained, anonymous, and can be executed directly. Below is the key theory related to PL/SQL blocks:
+
+1. PL/SQL Block Structure
+A PL/SQL block is divided into three major sections:
+
+Declaration Section: Optional. Used to declare variables, constants, and other structures like cursors and exceptions.
+Execution Section: Mandatory. Contains the core logic and executable PL/SQL code (SQL queries, loops, conditions, etc.).
+Exception Section: Optional. Handles errors and exceptions raised during execution.
+General Structure:
+plsql
+Copy code
+DECLARE
+    -- Declarations of variables, constants, cursors, etc.
+BEGIN
+    -- Executable statements (SQL queries, loops, conditions)
+EXCEPTION
+    -- Code to handle exceptions (if any)
+END;
+/
+Example:
+plsql
+Copy code
+DECLARE
+    v_rollno INT := 101;
+    v_bookname VARCHAR2(30) := 'Book A';
+BEGIN
+    -- SQL or PL/SQL code here
+    UPDATE Borrower
+    SET Status = 'R'
+    WHERE Roll_no = v_rollno AND Book_name = v_bookname;
+    DBMS_OUTPUT.PUT_LINE('Book Returned Successfully');
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No matching record found.');
+END;
+/
+2. Types of PL/SQL Blocks
+Anonymous Block: A simple block without a name, executed immediately after writing or invoking. It cannot be stored for later execution.
+Named Blocks (Procedures/Functions): These are stored in the database and can be reused. However, the theory of named blocks belongs more to procedures and functions.
+3. Characteristics of PL/SQL Blocks
+Anonymous: They do not have names and are not stored in the database for reuse. They are executed immediately.
+Declarative: You can declare variables, constants, and cursors to be used within the block.
+Executable: Contains actual logic such as SQL queries, loops, conditional statements (IF, WHILE, FOR).
+Exception Handling: Offers robust error handling through EXCEPTION blocks, allowing graceful recovery from errors.
+Encapsulation: PL/SQL blocks encapsulate the logic and variable declarations, providing a clean structure for code.
+4. Control Structures in PL/SQL Blocks
+Conditional Statements: Use IF...THEN...ELSE to perform decision-making.
+Loops: PL/SQL supports various looping structures like LOOP, WHILE, and FOR loops.
+Example:
+
+plsql
+Copy code
+DECLARE
+    v_days_issued INT := 20;
+    v_fine_amt INT;
+BEGIN
+    IF v_days_issued > 30 THEN
+        v_fine_amt := (v_days_issued - 30) * 50 + 15 * 5;
+    ELSIF v_days_issued > 15 THEN
+        v_fine_amt := v_days_issued * 5;
+    ELSE
+        v_fine_amt := 0;
+    END IF;
+END;
+/
+5. SQL Interaction in PL/SQL Blocks
+PL/SQL blocks allow you to combine SQL statements with procedural logic. SQL statements (like SELECT, INSERT, UPDATE, DELETE) can be embedded within the block, allowing both DML (Data Manipulation Language) and DDL (Data Definition Language) operations.
+
+SELECT INTO: Fetches data from a query and stores it into a variable.
+DML (Data Manipulation): The block can execute INSERT, UPDATE, DELETE statements on database tables.
+Example of SQL query in a block:
+
+plsql
+Copy code
+DECLARE
+    v_borrower_name VARCHAR2(50);
+BEGIN
+    SELECT Name INTO v_borrower_name FROM Borrower WHERE Roll_no = 101;
+    DBMS_OUTPUT.PUT_LINE('Borrower Name: ' || v_borrower_name);
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No Borrower Found.');
+END;
+/
+6. Error Handling in PL/SQL Blocks
+PL/SQL provides structured error handling through the EXCEPTION block, which helps catch exceptions that occur during execution.
+
+Common exceptions include:
+
+NO_DATA_FOUND: Raised when a SELECT INTO statement does not return any row.
+TOO_MANY_ROWS: Raised when a SELECT INTO statement returns more than one row.
+VALUE_ERROR: Raised when there’s a mismatch in data types.
+OTHERS: Catches all other exceptions not explicitly handled.
+Example:
+
+plsql
+Copy code
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Record Not Found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Some unexpected error occurred.');
+7. Advantages of PL/SQL Blocks
+Combines SQL with Procedural Programming: PL/SQL extends SQL by adding procedural constructs like loops, conditions, and error handling.
+Efficient: PL/SQL reduces the number of database calls by bundling SQL operations within a block, reducing round-trips.
+Modularity: While anonymous blocks are temporary, they promote a modular approach to coding.
+8. Scope and Lifetime of Variables
+Variables declared in a PL/SQL block are local to that block and cannot be accessed outside it.
+Once the block execution is completed, all variables are discarded.
+In conclusion, PL/SQL blocks form the foundation of procedural logic in Oracle databases, allowing developers to write and execute combined SQL and procedural code for various operations such as data manipulation, control structures, and error handling. They serve as the building blocks for more complex constructs like procedures, functions, and packages.
+
+
+
