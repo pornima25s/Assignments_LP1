@@ -1,0 +1,293 @@
+Assignment No.11
+Name: Dhanvantari Pradeep Pawar
+Roll No.: 31160
+
+test> db.orders.find().pretty()
+[
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bf8'),
+    order_id: 201,
+    customer_name: 'Venkatesh Rao',
+    shipping_address: {
+      street: '123 MG Road',
+      city: 'Pune',
+      state: 'Maharashtra',
+      postal_code: 411001
+    },
+    items: [ { item_id: 1, product_name: 'Kurta', quantity: 2, price: 500 } ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bf9'),
+    order_id: 202,
+    customer_name: 'Aishwarya Deshmukh',
+    shipping_address: {
+      street: '456 Brigade Road',
+      city: 'Bengaluru',
+      state: 'Karnataka',
+      postal_code: 560001
+    },
+    items: [ { item_id: 2, product_name: 'Saree', quantity: 1, price: 1200 } ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bfa'),
+    order_id: 203,
+    customer_name: 'Lakshmi Menon',
+    shipping_address: {
+      street: '789 MG Road',
+      city: 'Chennai',
+      state: 'Tamil Nadu',
+      postal_code: 600002
+    },
+    items: [ { item_id: 3, product_name: 'Mundu', quantity: 3, price: 800 } ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bfb'),
+    order_id: 204,
+    customer_name: 'Satyendra Tripathi',
+    shipping_address: {
+      street: '12 Connaught Place',
+      city: 'Delhi',
+      state: 'Delhi',
+      postal_code: 110001
+    },
+    items: [
+      {
+        item_id: 4,
+        product_name: 'Sherwani',
+        quantity: 1,
+        price: 5000
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bfc'),
+    order_id: 205,
+    customer_name: 'Radha Gupta',
+    shipping_address: {
+      street: '34 Laxmi Nagar',
+      city: 'Kanpur',
+      state: 'Uttar Pradesh',
+      postal_code: 208001
+    },
+    items: [
+      {
+        item_id: 5,
+        product_name: 'Chikankari Dress',
+        quantity: 2,
+        price: 1500
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bfd'),
+    order_id: 206,
+    customer_name: 'Rajesh Patel',
+    shipping_address: {
+      street: '567 Civil Lines',
+      city: 'Ahmedabad',
+      state: 'Gujarat',
+      postal_code: 380001
+    },
+    items: [ { item_id: 6, product_name: 'Dhoti', quantity: 3, price: 400 } ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bfe'),
+    order_id: 207,
+    customer_name: 'Kavita Iyer',
+    shipping_address: {
+      street: '890 MG Road',
+      city: 'Coimbatore',
+      state: 'Tamil Nadu',
+      postal_code: 641001
+    },
+    items: [
+      { item_id: 7, product_name: 'Pavadai', quantity: 2, price: 700 }
+    ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bff'),
+    order_id: 208,
+    customer_name: 'Narendra Joshi',
+    shipping_address: {
+      street: '123 FC Road',
+      city: 'Pune',
+      state: 'Maharashtra',
+      postal_code: 411004
+    },
+    items: [
+      {
+        item_id: 8,
+        product_name: 'Nehru Jacket',
+        quantity: 1,
+        price: 2000
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73c00'),
+    order_id: 209,
+    customer_name: 'Manisha Singh',
+    shipping_address: {
+      street: '234 Park Street',
+      city: 'Kolkata',
+      state: 'West Bengal',
+      postal_code: 700017
+    },
+    items: [
+      {
+        item_id: 9,
+        product_name: 'Tant Saree',
+        quantity: 1,
+        price: 1800
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73c01'),
+    order_id: 210,
+    customer_name: 'Dhanvantari Pawar',
+    shipping_address: {
+      street: '567 Residency Road',
+      city: 'Hyderabad',
+      state: 'Telangana',
+      postal_code: 500001
+    },
+    items: [
+      {
+        item_id: 10,
+        product_name: 'Pochampally Saree',
+        quantity: 2,
+        price: 3500
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6706b93c9c1ef6836ac73c02'),
+    order_id: 211,
+    customer_name: 'Ankita Verma',
+    shipping_address: {
+      street: '78 Green Park',
+      city: 'New Delhi',
+      state: 'Delhi',
+      postal_code: 110016
+    },
+    items: [
+      {
+        item_id: 11,
+        product_name: 'Lehenga',
+        quantity: 1,
+        price: 3500
+      },
+      { item_id: 12, product_name: 'Dupatta', quantity: 2, price: 600 }
+    ]
+  },
+  {
+    _id: ObjectId('6706b93c9c1ef6836ac73c03'),
+    order_id: 212,
+    customer_name: 'Rohit Sharma',
+    shipping_address: {
+      street: '34 Prabhat Road',
+      city: 'Pune',
+      state: 'Maharashtra',
+      postal_code: 411001
+    },
+    items: [
+      { item_id: 13, product_name: 'Blazer', quantity: 1, price: 4500 },
+      { item_id: 14, product_name: 'Tie', quantity: 3, price: 300 }
+    ]
+  },
+  {
+    _id: ObjectId('6706b93c9c1ef6836ac73c04'),
+    order_id: 213,
+    customer_name: 'Meera Naidu',
+    shipping_address: {
+      street: '91 Jubilee Hills',
+      city: 'Hyderabad',
+      state: 'Telangana',
+      postal_code: 500033
+    },
+    items: [
+      {
+        item_id: 15,
+        product_name: 'Anarkali Dress',
+        quantity: 1,
+        price: 5000
+      },
+      {
+        item_id: 16,
+        product_name: 'Jewelry Set',
+        quantity: 1,
+        price: 1500
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6706b93c9c1ef6836ac73c05'),
+    order_id: 214,
+    customer_name: 'Sahil Kapoor',
+    shipping_address: {
+      street: '22 Karol Bagh',
+      city: 'New Delhi',
+      state: 'Delhi',
+      postal_code: 110005
+    },
+    items: [
+      { item_id: 17, product_name: 'Jeans', quantity: 2, price: 1200 },
+      { item_id: 18, product_name: 'T-shirt', quantity: 3, price: 800 }
+    ]
+  }
+]
+
+test> var mapFunction1 = function () {
+...   this.items.forEach(function (item) {
+...     emit(this.order_id, item.price * item.quantity);
+...   }, this);
+... };
+
+
+test> var reduceFunction1 = function (key, values) { return Array.sum(values); };
+
+test> db.orders.mapReduce( mapFunction1, reduceFunction1, { out: "map_reduce_example" } );
+{ result: 'map_reduce_example', ok: 1 }
+test> db.map_reduce_example.find().sort({_id:-1});
+[
+  { _id: 214, value: 4800 },
+  { _id: 213, value: 6500 },
+  { _id: 212, value: 5400 },
+  { _id: 211, value: 4700 },
+  { _id: 210, value: 7000 },
+  { _id: 209, value: 1800 },
+  { _id: 208, value: 2000 },
+  { _id: 207, value: 1400 },
+  { _id: 206, value: 1200 },
+  { _id: 205, value: 3000 },
+  { _id: 204, value: 5000 },
+  { _id: 203, value: 2400 },
+  { _id: 202, value: 1200 },
+  { _id: 201, value: 1000 }
+]
+
+test> var mapFunction2 = function () { this.items.forEach(function (item) { emit(this.order_id, item.price * item.quantity); }, this); };
+
+test> var reduceFunction2 = function (key, values) { return Array.avg(values); };
+
+test> db.orders.mapReduce( mapFunction2, reduceFunction2, { out: "map_reduce_example2" } );
+{ result: 'map_reduce_example2', ok: 1 }
+test> db.map_reduce_example2.find().sort({_id:-1});
+[
+  { _id: 214, value: 2400 },
+  { _id: 213, value: 3250 },
+  { _id: 212, value: 2700 },
+  { _id: 211, value: 2350 },
+  { _id: 210, value: 7000 },
+  { _id: 209, value: 1800 },
+  { _id: 208, value: 2000 },
+  { _id: 207, value: 1400 },
+  { _id: 206, value: 1200 },
+  { _id: 205, value: 3000 },
+  { _id: 204, value: 5000 },
+  { _id: 203, value: 2400 },
+  { _id: 202, value: 1200 },
+  { _id: 201, value: 1000 }
+]
+test>

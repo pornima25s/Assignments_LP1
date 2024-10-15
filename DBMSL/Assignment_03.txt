@@ -1,0 +1,321 @@
+ASSIGNMENT NO. 03
+NAME: DHANVANATARI PAWAR
+ROLL NO.: 31160
+----------------------------------------------------------------------
+Assignment No 3 (based on Student schema)  
+Student (s_id, Drive_id,T_id,s_name,CGPA,s_branch,s_dob)
+ Placement Drive( Drive_id, Pcompany_name,package,location)
+ Training ( T_id,Tcompany_name,T_Fee,T_date) 
+
+Use the tables created in assignment no 2 and execute the following queries:  
+
+mysql> select * from Student;
++------+----------+------+----------------+------+----------+------------+
+| s_id | Drive_id | T_id | s_name         | CGPA | s_branch | S_dob      |
++------+----------+------+----------------+------+----------+------------+
+|    1 |        1 |    7 | Amit Sharma    | 8.50 | Computer | 2001-01-15 |
+|    2 |        2 |    2 | Priya Patil    | 9.00 | IT       | 2002-05-22 |
+|    3 |        3 |    3 | Rajesh Kumar   | 7.50 | ENTC     | 2003-03-10 |
+|    4 |        1 |    2 | Anita Joshi    | 8.00 | IT       | 2004-07-18 |
+|    5 |        2 |    1 | Ravi Verma     | 7.80 | Computer | 2005-11-30 |
+|    6 |        6 |    2 | Sita Reddy     | 8.20 | AIDS     | 2006-04-12 |
+|    8 |        2 |    1 | Arjun Desai    | 8.60 | ENTC     | 2008-09-25 |
+|    9 |        6 |    2 | Dhruv Bhat     | 8.10 | IT       | 2009-11-30 |
+|   10 |        1 |    4 | Aditi Rao      | 7.70 | Computer | 2010-12-19 |
+|   11 |        1 |    7 | Rahul Jain     | 8.30 | Computer | 2011-06-10 |
+|   12 |        2 |    2 | Sonal Mehta    | 8.90 | ENTC     | 2012-02-14 |
+|   13 |        3 |    3 | Karan Malhotra | 7.20 | AIDS     | 2013-08-08 |
+|   14 |        1 |    7 | Sneha Kapoor   | 8.40 | IT       | 2014-10-21 |
+|   15 |        2 |    1 | Varun Patel    | 7.90 | Computer | 2015-05-25 |
+|   16 |        3 |    2 | Shantanu Yadav | 6.50 | IT       | 2004-02-17 |
+|   17 |        3 |    1 | Shrawan Tiwari | 7.50 | ENTC     | 2004-03-02 |
++------+----------+------+----------------+------+----------+------------+
+16 rows in set (0.00 sec)
+
+mysql> select* from Training;
++------+---------------+--------+--------+
+| T_id | Tcompany_name | T_Fee  | T_year |
++------+---------------+--------+--------+
+|    1 | SkillForge    |  16000 |   2018 |
+|    2 | TechAdvance   |  22000 |   2011 |
+|    3 | LearnPlus     |  27000 |   2012 |
+|    4 | CodeMasters   |  60000 |   2019 |
+|    5 | Microsoft     |  30000 |   2015 |
+|    7 | Amazon        | 250000 |   2022 |
+|    8 | UBS           | 300000 |   2022 |
++------+---------------+--------+--------
+6 rows in set (0.00 sec)
+
+mysql> Select * from PlacementDrive;
++----------+---------------+---------+----------+
+| Drive_id | Pcompany_name | package | location |
++----------+---------------+---------+----------+
+|        1 | CodeMasters   |  500000 | Nagpur   |
+|        2 | AlphaTech     |  650000 | Thane    |
+|        3 | BetaSoft      |  750000 | Pune     |
+|        6 | Microsoft     | 3000000 | Thane    |
++----------+---------------+---------+----------+
+4 rows in set (0.00 sec)
+
+
+
+1. Find the Student details and Placement details using NATURAL JOIN.  
+
+mysql>select * from Student NATURAL JOIN PlacementDrive;
++----------+------+------+----------------+------+----------+------------+---------------+---------+----------+
+| Drive_id | s_id | T_id | s_name         | CGPA | s_branch | S_dob      | Pcompany_name | package | location |
++----------+------+------+----------------+------+----------+------------+---------------+---------+----------+
+|        1 |    1 |    7 | Amit Sharma    | 8.50 | Computer | 2001-01-15 | CodeMasters   |  500000 | Nagpur   |
+|        1 |    4 |    2 | Anita Joshi    | 8.00 | IT       | 2004-07-18 | CodeMasters   |  500000 | Nagpur   |
+|        1 |   10 |    4 | Aditi Rao      | 7.70 | Computer | 2010-12-19 | CodeMasters   |  500000 | Nagpur   |
+|        1 |   11 |    7 | Rahul Jain     | 8.30 | Computer | 2011-06-10 | CodeMasters   |  500000 | Nagpur   |
+|        1 |   14 |    7 | Sneha Kapoor   | 8.40 | IT       | 2014-10-21 | CodeMasters   |  500000 | Nagpur   |
+|        2 |    2 |    2 | Priya Patil    | 9.00 | IT       | 2002-05-22 | AlphaTech     |  650000 | Thane    |
+|        2 |    5 |    1 | Ravi Verma     | 7.80 | Computer | 2005-11-30 | AlphaTech     |  650000 | Thane    |
+|        2 |    8 |    1 | Arjun Desai    | 8.60 | ENTC     | 2008-09-25 | AlphaTech     |  650000 | Thane    |
+|        2 |   12 |    2 | Sonal Mehta    | 8.90 | ENTC     | 2012-02-14 | AlphaTech     |  650000 | Thane    |
+|        2 |   15 |    1 | Varun Patel    | 7.90 | Computer | 2015-05-25 | AlphaTech     |  650000 | Thane    |
+|        3 |    3 |    3 | Rajesh Kumar   | 7.50 | ENTC     | 2003-03-10 | BetaSoft      |  750000 | Pune     |
+|        3 |   13 |    3 | Karan Malhotra | 7.20 | AIDS     | 2013-08-08 | BetaSoft      |  750000 | Pune     |
+|        3 |   16 |    2 | Shantanu Yadav | 6.50 | IT       | 2004-02-17 | BetaSoft      |  750000 | Pune     |
+|        3 |   17 |    1 | Shrawan Tiwari | 7.50 | ENTC     | 2004-03-02 | BetaSoft      |  750000 | Pune     |
+|        6 |    6 |    2 | Sita Reddy     | 8.20 | AIDS     | 2006-04-12 | Microsoft     | 3000000 | Thane    |
+|        6 |    9 |    2 | Dhruv Bhat     | 8.10 | IT       | 2009-11-30 | Microsoft     | 3000000 | Thane    |
++----------+------+------+----------------+------+----------+------------+---------------+---------+----------+
+16 rows in set (0.00 sec)
+
+2. Find all the student details with company_name who have conducted in same drive
+mysql> select  s_name , Pcompany_name from Student INNER JOIN PlacementDrive WHERE Student.Drive_id = PlacementDrive.Drive_id;
++----------------+---------------+
+| s_name         | Pcompany_name |
++----------------+---------------+
+| Amit Sharma    | CodeMasters   |
+| Anita Joshi    | CodeMasters   |
+| Aditi Rao      | CodeMasters   |
+| Rahul Jain     | CodeMasters   |
+| Sneha Kapoor   | CodeMasters   |
+| Priya Patil    | AlphaTech     |
+| Ravi Verma     | AlphaTech     |
+| Arjun Desai    | AlphaTech     |
+| Sonal Mehta    | AlphaTech     |
+| Varun Patel    | AlphaTech     |
+| Purva Jain     | AlphaTech     |
+| Rajesh Kumar   | BetaSoft      |
+| Karan Malhotra | BetaSoft      |
+| Shantanu Yadav | BetaSoft      |
+| Shrawan Tiwari | BetaSoft      |
+| Shruti Shah    | BetaSoft      |
+| Sita Reddy     | Microsoft     |
+| Dhruv Bhat     | Microsoft     |
++----------------+---------------+
+18 rows in set (0.00 sec)
+
+3. List all the Student name and Student branch of Student having package 5 LPA
+mysql> select s_name, s_branch from Student INNER JOIN PlacementDrive ON Student.Drive_id = PlacementDrive.Drive_id WHERE package = 500000;
++--------------+----------+
+| s_name       | s_branch |
++--------------+----------+
+| Amit Sharma  | Computer |
+| Anita Joshi  | IT       |
+| Aditi Rao    | Computer |
+| Rahul Jain   | Computer |
+| Sneha Kapoor | IT       |
++--------------+----------+
+5 rows in set (0.00 sec)
+
+4.List all the student names ,company_name having T_fee more than 20000
+mysql> Select s_name, Tcompany_name from Student RIGHT OUTER JOIN Training ON Student.T_id = Training.T_id WHERE T_Fee > 20000 ;
+
++----------------+---------------+
+| s_name         | Tcompany_name |
++----------------+---------------+
+| Priya Patil    | TechAdvance   |
+| Anita Joshi    | TechAdvance   |
+| Sita Reddy     | TechAdvance   |
+| Dhruv Bhat     | TechAdvance   |
+| Sonal Mehta    | TechAdvance   |
+| Shantanu Yadav | TechAdvance   |
+| Rajesh Kumar   | LearnPlus     |
+| Karan Malhotra | LearnPlus     |
+| Aditi Rao      | CodeMasters   |
+| Shruti Shah    | Microsoft     |
+| Purva Jain     | Microsoft     |
+| Amit Sharma    | Amazon        |
+| Rahul Jain     | Amazon        |
+| Sneha Kapoor   | Amazon        |
+| NULL           | UBS           |
++----------------+---------------+
+
+14 rows in set (0.00 sec)
+
+5. Display all training details attended by “shantanu” in year 2011  
+mysql> SELECT * FROM Training t INNER JOIN Student s ON t.T_id = s.T_id WHERE s.s_name = "Shantanu Yadav" && t.T_year = 2011;
++------+---------------+-------+--------+------+----------+------+----------------+------+----------+------------+
+| T_id | Tcompany_name | T_Fee | T_year | s_id | Drive_id | T_id | s_name         | CGPA | s_branch | S_dob      |
++------+---------------+-------+--------+------+----------+------+----------------+------+----------+------------+
+|    2 | TechAdvance   | 22000 |   2011 |   16 |        3 |    2 | Shantanu Yadav | 6.50 | IT       | 2004-02-17 |
++------+---------------+-------+--------+------+----------+------+----------------+------+----------+------------+
+1 row in set, 1 warning (0.00 sec)
+
+6. list the total number of companies who conduct training before 2015
+
+mysql>  Select Tcompany_name from Training where T_year = (select T_year from Training where T_year = 2015);
++---------------+
+| Tcompany_name |
++---------------+
+| TechAdvance   |
+| LearnPlus     |
++---------------+
+2 rows in set (0.00 sec)
+
+7. List the students name with company ‘Microsoft’ and  location ’Thane’
+mysql> Select s.s_name ,t.Pcompany_name from Student s INNER JOIN PlacementDrive t ON  t.Drive_id = s.Drive_id  WHERE t.Pcompany_name = 'Microsoft' &&  t.location = "Thane";
++------------+---------------+
+| s_name     | Pcompany_name |
++------------+---------------+
+| Sita Reddy | Microsoft     |
+| Dhruv Bhat | Microsoft     |
++------------+---------------+
+2 rows in set, 1 warning (0.00 sec)
+
+8. Find  the names of all Students who have joined ‘Microsoft ‘ training  in 2015 .
+mysql> select s_name from Student INNER JOIN Training ON Student.T_id = Training.T_id WHERE T_year = 2015;
++-------------+
+| s_name      |
++-------------+
+| Shruti Shah |
+| Purva Jain  |
++-------------+
+2 rows in set (0.00 sec)
+
+9. Create a view showing the Student and Training details. 
+mysql> CREATE VIEW StudTrain AS SELECT s_id, s_name, CGPA, Tcompany_name, T_Fee, T_year FROM Student INNER JOIN Training WHERE  Student.T_id = Training.T_id;
+Query OK, 0 rows affected (0.01 sec)
+mysql> Select * from StudTrain;
++------+----------------+------+---------------+--------+--------+
+| s_id | s_name         | CGPA | Tcompany_name | T_Fee  | T_year |
++------+----------------+------+---------------+--------+--------+
+|    5 | Ravi Verma     | 7.80 | SkillForge    |  16000 |   2018 |
+|    8 | Arjun Desai    | 8.60 | SkillForge    |  16000 |   2018 |
+|   15 | Varun Patel    | 7.90 | SkillForge    |  16000 |   2018 |
+|   17 | Shrawan Tiwari | 7.50 | SkillForge    |  16000 |   2018 |
+|    2 | Priya Patil    | 9.00 | TechAdvance   |  22000 |   2011 |
+|    4 | Anita Joshi    | 8.00 | TechAdvance   |  22000 |   2011 |
+|    6 | Sita Reddy     | 8.20 | TechAdvance   |  22000 |   2011 |
+|    9 | Dhruv Bhat     | 8.10 | TechAdvance   |  22000 |   2011 |
+|   12 | Sonal Mehta    | 8.90 | TechAdvance   |  22000 |   2011 |
+|   16 | Shantanu Yadav | 6.50 | TechAdvance   |  22000 |   2011 |
+|    3 | Rajesh Kumar   | 7.50 | LearnPlus     |  27000 |   2012 |
+|   13 | Karan Malhotra | 7.20 | LearnPlus     |  27000 |   2012 |
+|   10 | Aditi Rao      | 7.70 | CodeMasters   |  60000 |   2019 |
+|   18 | Shruti Shah    | 6.90 | Microsoft     |  30000 |   2015 |
+|   19 | Purva Jain     | 8.90 | Microsoft     |  30000 |   2015 |
+|    1 | Amit Sharma    | 8.50 | Amazon        | 250000 |   2022 |
+|   11 | Rahul Jain     | 8.30 | Amazon        | 250000 |   2022 |
+|   14 | Sneha Kapoor   | 8.40 | Amazon        | 250000 |   2022 |
++------+----------------+------+---------------+--------+--------+
+18 rows in set (0.00 sec)
+
+10. Perform Manipulation on simple view-Insert, update, delete, drop view.  
+mysql> CREATE VIEW TrainingView As select T_id,Tcompany_name, T_Fee,T_year from Training;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select* from TrainingView;
++------+---------------+--------+--------+
+| T_id | Tcompany_name | T_Fee  | T_year |
++------+---------------+--------+--------+
+|    1 | SkillForge    |  16000 |   2018 |
+|    2 | TechAdvance   |  22000 |   2011 |
+|    3 | LearnPlus     |  27000 |   2012 |
+|    4 | CodeMasters   |  60000 |   2019 |
+|    5 | Microsoft     |  30000 |   2015 |
+|    7 | Amazon        | 250000 |   2022 |
++------+---------------+--------+--------+
+6 rows in set (0.00 sec)
+
+mysql> Insert into TrainingView values(6,"Barclays",10000, 2025);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select* from TrainingView;
++------+---------------+--------+--------+
+| T_id | Tcompany_name | T_Fee  | T_year |
++------+---------------+--------+--------+
+|    1 | SkillForge    |  16000 |   2018 |
+|    2 | TechAdvance   |  22000 |   2011 |
+|    3 | LearnPlus     |  27000 |   2012 |
+|    4 | CodeMasters   |  60000 |   2019 |
+|    5 | Microsoft     |  30000 |   2015 |
+|    6 | Barclays      |  10000 |   2025 |
+|    7 | Amazon        | 250000 |   2022 |
++------+---------------+--------+--------+
+7 rows in set (0.00 sec)
+
+mysql> select* from Training;
++------+---------------+--------+--------+
+| T_id | Tcompany_name | T_Fee  | T_year |
++------+---------------+--------+--------+
+|    1 | SkillForge    |  16000 |   2018 |
+|    2 | TechAdvance   |  22000 |   2011 |
+|    3 | LearnPlus     |  27000 |   2012 |
+|    4 | CodeMasters   |  60000 |   2019 |
+|    5 | Microsoft     |  30000 |   2015 |
+|    6 | Barclays      |  10000 |   2025 |
+|    7 | Amazon        | 250000 |   2022 |
++------+---------------+--------+--------+
+7 rows in set (0.00 sec)
+
+mysql> UPDATE TrainingView SET T_Fee = 20000 where Tcompany_name = "LearnPlus";
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select* from Training;
++------+---------------+--------+--------+
+| T_id | Tcompany_name | T_Fee  | T_year |
++------+---------------+--------+--------+
+|    1 | SkillForge    |  16000 |   2018 |
+|    2 | TechAdvance   |  22000 |   2011 |
+|    3 | LearnPlus     |  20000 |   2012 |
+|    4 | CodeMasters   |  60000 |   2019 |
+|    5 | Microsoft     |  30000 |   2015 |
+|    6 | Barclays      |  10000 |   2025 |
+|    7 | Amazon        | 250000 |   2022 |
++------+---------------+--------+--------+
+7 rows in set (0.00 sec)
+
+mysql> select* from TrainingView;
++------+---------------+--------+--------+
+| T_id | Tcompany_name | T_Fee  | T_year |
++------+---------------+--------+--------+
+|    1 | SkillForge    |  16000 |   2018 |
+|    2 | TechAdvance   |  22000 |   2011 |
+|    3 | LearnPlus     |  20000 |   2012 |
+|    4 | CodeMasters   |  60000 |   2019 |
+|    5 | Microsoft     |  30000 |   2015 |
+|    6 | Barclays      |  10000 |   2025 |
+|    7 | Amazon        | 250000 |   2022 |
++------+---------------+--------+--------+
+7 rows in set (0.00 sec)
+
+mysql> Delete from TrainingView where T_year = 2018;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select* from Training;
++------+---------------+--------+--------+
+| T_id | Tcompany_name | T_Fee  | T_year |
++------+---------------+--------+--------+
+|    2 | TechAdvance   |  22000 |   2011 |
+|    3 | LearnPlus     |  20000 |   2012 |
+|    4 | CodeMasters   |  60000 |   2019 |
+|    5 | Microsoft     |  30000 |   2015 |
+|    6 | Barclays      |  10000 |   2025 |
+|    7 | Amazon        | 250000 |   2022 |
++------+---------------+--------+--------+
+6 rows in set (0.00 sec)
+
+
+mysql> DROP VIEW TrainingView;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select* from TrainingView;
+ERROR 1146 (42S02): Table 'te_31160.trainingview' doesn't exist
+mysql>

@@ -1,0 +1,414 @@
+﻿Assignment B1
+Roll No.:31160
+Name:Dhanvantari Pawar
+
+
+
+
+test> show dbs
+admin   40.00 KiB
+config  12.00 KiB
+local   72.00 KiB
+test> use te31160_db
+switched to db te31160_db
+te31160_db> show collections
+
+
+te31160_db> db.createCollection("orders")
+{ ok: 1 }
+te31160_db> db.orders.insertMany([
+...   {
+...     order_id: 201,
+...     customer_name: "Venkatesh Rao",
+...     shipping_address: {
+...       street: "123 MG Road",
+...       city: "Pune",
+...       state: "Maharashtra",
+...       postal_code: 411001
+...     },
+...     items: [
+...       { item_id: 1, product_name: "Kurta", quantity: 2, price: 500 }
+...     ]
+...   },
+...   {
+...     order_id: 202,
+...     customer_name: "Aishwarya Deshmukh",
+...     shipping_address: {
+...       street: "456 Brigade Road",
+...       city: "Bengaluru",
+...       state: "Karnataka",
+...       postal_code: 560001
+...     },
+...     items: [
+...       { item_id: 2, product_name: "Saree", quantity: 1, price: 1200 }
+...     ]
+...   },
+...   {
+...     order_id: 203,
+...     customer_name: "Lakshmi Menon",
+...     shipping_address: {
+...       street: "789 MG Road",
+...       city: "Chennai",
+...       state: "Tamil Nadu",
+...       postal_code: 600002
+...     },
+...     items: [
+...       { item_id: 3, product_name: "Mundu", quantity: 3, price: 800 }
+...     ]
+...   },
+...   {
+...     order_id: 204,
+...     customer_name: "Satyendra Tripathi",
+...     shipping_address: {
+...       street: "12 Connaught Place",
+...       city: "Delhi",
+...       state: "Delhi",
+...       postal_code: 110001
+...     },
+...     items: [
+...       { item_id: 4, product_name: "Sherwani", quantity: 1, price: 5000 }
+...     ]
+...   },
+...   {
+...     order_id: 205,
+...     customer_name: "Radha Gupta",
+...     shipping_address: {
+...       street: "34 Laxmi Nagar",
+...       city: "Kanpur",
+...       state: "Uttar Pradesh",
+...       postal_code: 208001
+...     },
+...     items: [
+...       { item_id: 5, product_name: "Chikankari Dress", quantity: 2, price: 1500 }
+...     ]
+...   },
+...   {
+...     order_id: 206,
+...     customer_name: "Rajesh Patel",
+...     shipping_address: {
+...       street: "567 Civil Lines",
+...       city: "Ahmedabad",
+...       state: "Gujarat",
+...       postal_code: 380001
+...     },
+...     items: [
+...       { item_id: 6, product_name: "Dhoti", quantity: 3, price: 400 }
+...     ]
+...   },
+...   {
+...     order_id: 207,
+...     customer_name: "Kavita Iyer",
+...     shipping_address: {
+...       street: "890 MG Road",
+...       city: "Coimbatore",
+...       state: "Tamil Nadu",
+...       postal_code: 641001
+...     },
+...     items: [
+...       { item_id: 7, product_name: "Pavadai", quantity: 2, price: 700 }
+...     ]
+...   },
+...   {
+...     order_id: 208,
+...     customer_name: "Narendra Joshi",
+...     shipping_address: {
+...       street: "123 FC Road",
+...       city: "Pune",
+...       state: "Maharashtra",
+...       postal_code: 411004
+...     },
+...     items: [
+...       { item_id: 8, product_name: "Nehru Jacket", quantity: 1, price: 2000 }
+...     ]
+...   },
+...   {
+...     order_id: 209,
+...     customer_name: "Manisha Singh",
+...     shipping_address: {
+...       street: "234 Park Street",
+...       city: "Kolkata",
+...       state: "West Bengal",
+...       postal_code: 700017
+...     },
+...     items: [
+...       { item_id: 9, product_name: "Tant Saree", quantity: 1, price: 1800 }
+...     ]
+...   },
+...   {
+...     order_id: 210,
+...     customer_name: "Dhanvantari Pawar",
+...     shipping_address: {
+...       street: "567 Residency Road",
+...       city: "Hyderabad",
+...       state: "Telangana",
+...       postal_code: 500001
+...     },
+...     items: [
+...       { item_id: 10, product_name: "Pochampally Saree", quantity: 2, price: 3500 }
+...     ]
+...   }
+... ])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('66f90cbe10872ed025c73bfc'),
+    '1': ObjectId('66f90cbe10872ed025c73bfd'),
+    '2': ObjectId('66f90cbe10872ed025c73bfe'),
+    '3': ObjectId('66f90cbe10872ed025c73bff'),
+    '4': ObjectId('66f90cbe10872ed025c73c00'),
+    '5': ObjectId('66f90cbe10872ed025c73c01'),
+    '6': ObjectId('66f90cbe10872ed025c73c02'),
+    '7': ObjectId('66f90cbe10872ed025c73c03'),
+    '8': ObjectId('66f90cbe10872ed025c73c04'),
+    '9': ObjectId('66f90cbe10872ed025c73c05')
+  }
+}
+
+
+1)Find Orders with Price Greater Than a Value ($gt)
+te31160_db> db.orders.find({"items.price":{$gt:1500}});
+[
+  {
+    _id: ObjectId('66f90cbe10872ed025c73bff'),
+    order_id: 204,
+    customer_name: 'Satyendra Tripathi',
+    shipping_address: {
+      street: '12 Connaught Place',
+      city: 'Delhi',
+      state: 'Delhi',
+      postal_code: 110001
+    },
+    items: [
+      {
+        item_id: 4,
+        product_name: 'Sherwani',
+        quantity: 1,
+        price: 5000
+      }
+    ]
+  },
+  {
+    _id: ObjectId('66f90cbe10872ed025c73c03'),
+    order_id: 208,
+    customer_name: 'Narendra Joshi',
+    shipping_address: {
+      street: '123 FC Road',
+      city: 'Pune',
+      state: 'Maharashtra',
+      postal_code: 411004
+    },
+    items: [
+      {
+        item_id: 8,
+        product_name: 'Nehru Jacket',
+        quantity: 1,
+        price: 2000
+      }
+    ]
+  },
+  {
+    _id: ObjectId('66f90cbe10872ed025c73c04'),
+    order_id: 209,
+    customer_name: 'Manisha Singh',
+    shipping_address: {
+      street: '234 Park Street',
+      city: 'Kolkata',
+      state: 'West Bengal',
+      postal_code: 700017
+    },
+    items: [
+      {
+        item_id: 9,
+        product_name: 'Tant Saree',
+        quantity: 1,
+        price: 1800
+      }
+    ]
+  },
+  {
+    _id: ObjectId('66f90cbe10872ed025c73c05'),
+    order_id: 210,
+    customer_name: 'Dhanvantari Pawar',
+    shipping_address: {
+      street: '567 Residency Road',
+      city: 'Hyderabad',
+      state: 'Telangana',
+      postal_code: 500001
+    },
+    items: [
+      {
+        item_id: 10,
+        product_name: 'Pochampally Saree',
+        quantity: 2,
+        price: 3500
+      }
+    ]
+  }
+]
+te31160_db>
+
+
+2)Find customers with name starting with ‘A’
+te31160_db> db.orders.find({customer_name:{$regex: /^A/}});
+[
+  {
+    _id: ObjectId('66f90cbe10872ed025c73bfd'),
+    order_id: 202,
+    customer_name: 'Aishwarya Deshmukh',
+    shipping_address: {
+      street: '456 Brigade Road',
+      city: 'Bengaluru',
+      state: 'Karnataka',
+      postal_code: 560001
+    },
+    items: [ { item_id: 2, product_name: 'Saree', quantity: 1, price: 1200 } ]
+  }
+]
+
+
+3)Update a document String
+te31160_db> db.orders.updateOne({order_id:202}, {$set:{status:"Delivered"}});
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
+4)Increments the price of all items with a price less than 500 by 50.
+db.orders.updateMany(
+  { "items.price": { $lt: 500 } },
+  { $inc: { "items.$[].price": 50 } }
+);
+
+
+5)If a document with order_id 212 doesn't exist, this query inserts it.
+te31160_db> db.orders.updateOne({order_id:212},{$set:{customer_name:"Suresh Kumar", status: "Shipped"}},{upsert:true});
+{
+  acknowledged: true,
+  insertedId: ObjectId('66f9135228a4ee050fe6757c'),
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 1
+}
+
+
+6)find orders where the customer's name is either "Vyankatesh Rao" or "Kavita Iyer".
+te31160_db> db.orders.find({customer_name:{$in:["Vyankatesh Rao", "Kavita Iyer"]}});
+[
+  {
+    _id: ObjectId('66f90cbe10872ed025c73bfc'),
+    order_id: 201,
+    customer_name: 'Vyankatesh Rao',
+    shipping_address: {
+      street: '123 MG Road',
+      city: 'Pune',
+      state: 'Maharashtra',
+      postal_code: 411001
+    },
+    items: [ { item_id: 1, product_name: 'Kurta', quantity: 2, price: 500 } ]
+  },
+  {
+    _id: ObjectId('66f90cbe10872ed025c73c02'),
+    order_id: 207,
+    customer_name: 'Kavita Iyer',
+    shipping_address: {
+      street: '890 MG Road',
+      city: 'Coimbatore',
+      state: 'Tamil Nadu',
+      postal_code: 641001
+    },
+    items: [
+      { item_id: 7, product_name: 'Pavadai', quantity: 2, price: 700 }
+    ]
+  }
+]
+
+
+7) deletes all orders where the price of an item is less than 500.
+te31160_db> db.orders.deleteMany({"items.price":{ $lt:500}});
+{ acknowledged: true, deletedCount: 1 }
+te31160_db>
+
+
+8)Find the document with order_id 201 and returns only the customer_name and shipping_address fields, excluding the _id.
+te31160_db> db.orders.find({order_id:201}, {customer_name:1, shipping_address:1, _id:0});
+[
+  {
+    customer_name: 'Vyankatesh Rao',
+    shipping_address: {
+      street: '123 MG Road',
+      city: 'Pune',
+      state: 'Maharashtra',
+      postal_code: 411001
+    }
+  }
+]
+9)Delete all documents where the customer_name is "Radha Gupta" and the shipping_address.city is "Kanpur".
+te31160_db> db.orders.deleteMany({$and:[{customer_name:"Radha Gupta"},{"shipping_address.city":"Kanpur"}]});
+{ acknowledged: true, deletedCount: 1 }
+
+
+
+
+
+
+10)Add the tag "Urgent" to a tags array (if it’s not already present) and update the status field to "Dispatched".
+db.orders.UpdateOne is not a function
+te31160_db> db.orders.updateOne({order_id:204},{$addToSet:{tags:"Urgent"},$set:{set:{status:"Dispatched"}}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+te31160_db>
+
+
+
+
+11) finds documents where either the items.price is greater than or equal to 3000 or the customer_name starts with "Rajesh".
+te31160_db> db.orders.find({$or:[{"items.price":{$gte: 3000}},{customer_name:{$regex:/^Rajesh/}}]});
+[
+  {
+    _id: ObjectId('66f90cbe10872ed025c73bff'),
+    order_id: 204,
+    customer_name: 'Satyendra Tripathi',
+    shipping_address: {
+      street: '12 Connaught Place',
+      city: 'Delhi',
+      state: 'Delhi',
+      postal_code: 110001
+    },
+    items: [
+      {
+        item_id: 4,
+        product_name: 'Sherwani',
+        quantity: 1,
+        price: 5000
+      }
+    ]
+  },
+  {
+    _id: ObjectId('66f90cbe10872ed025c73c05'),
+    order_id: 210,
+    customer_name: 'Dhanvantari Pawar',
+    shipping_address: {
+      street: '567 Residency Road',
+      city: 'Hyderabad',
+      state: 'Telangana',
+      postal_code: 500001
+    },
+    items: [
+      {
+        item_id: 10,
+        product_name: 'Pochampally Saree',
+        quantity: 2,
+        price: 3500
+      }
+    ]
+  }
+]

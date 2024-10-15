@@ -1,0 +1,70 @@
+Assignment No. 12
+Name: Dhanvantari Pawar
+Roll No. : 31160
+
+
+package CommonConnection;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+
+import java.util.Scanner;
+
+import org.bson.Document;
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.MongoCredential;
+
+public class JavaMongoDBConnection {
+public static void main(String args[]) {
+try {
+MongoClient mclient = new MongoClient(new MongoClientURI("mongodb://te31160:te31160@10.10.13.97:27017/te31160_db"));
+MongoDatabase db = mclient.getDatabase("te31160_db");
+MongoCollection<Document> col = db.getCollection("Order");
+System.out.println("1. Insert\n 2. Delete\n 3. Update");
+int choice;
+Scanner sc = new Scanner(System.in);
+String pname;
+while(true) 
+{
+	System.out.println("Enter choice: ");
+	choice = sc.nextInt();
+	switch(choice) {
+	case 1:
+	System.out.println("Order ID. :");
+	sc.nextLine();
+	String Order_id = sc.next();
+	System.out.println("Product Name. :");
+	pname = sc.next();
+	Document doc = new Document();
+	doc.append("Order_id", Order_id);
+	doc.append("Pname", pname);
+	col.insertOne(doc);
+	break;
+	case 2:
+	System.out.println("Order ID:");
+	Order_id = sc.next();
+	col.deleteOne(Filters.eq("Order_id", Order_id));
+	break;
+	case 3:
+	System.out.println("Order ID: ");
+	Order_id = sc.next();
+	System.out.println("Enter updated product name: ");
+	sc.nextLine();
+	pname = sc.next();
+	doc = new Document();
+	doc.append("Order_id", Order_id);
+	doc.append("Pname", pname);
+	col.replaceOne(Filters.eq("Order_id", Order_id), doc);
+	break;
+	default:
+	break;
+	}
+	}
+}
+catch(Exception e) {
+System.out.println(e);
+}
+}
+}

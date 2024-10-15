@@ -1,0 +1,358 @@
+﻿Assignment B2
+Roll No.: 31160
+Name: Dhanvantari Pawar
+______________________________________________________________________
+
+
+1)Find the Total Number of Orders
+te31160_db> db.orders.aggregate({$count: "total_orders"});
+[ { total_orders: 9 } ]
+
+
+2)Get the Average Price of All Items in Orders
+te31160_db> db.orders.aggregate([{$unwind: "$items"}, {$group:{_id:null, avg_price:{$avg:"$items.price"}}}]);
+[ { _id: null, avg_price: 1937.5 } ]
+
+
+3)Find the Top 3 Customers by Total Order Amount
+te31160_db> db.orders.aggregate([{$unwind:"$items"}, {$group:{_id:"$customer_name", totalAmount:{$sum:"$items.price"}}},{$sort:{totalAmount:-1}},{$limit:3}]);
+[
+  { _id: 'Satyendra Tripathi', totalAmount: 5000 },
+  { _id: 'Dhanvantari Pawar', totalAmount: 3500 },
+  { _id: 'Narendra Joshi', totalAmount: 2000 }
+]
+
+
+...   {
+...     order_id: 1,
+...     customer_name: "Rajesh Kumar",
+...     shipping_address: { city: "Mumbai", state: "Maharashtra" },
+...     items: [
+...       { product_name: "Laptop", quantity: 2, price: 50000 },
+...       { product_name: "Mouse", quantity: 1, price: 500 }
+...     ],
+...     order_date: new Date("2023-09-01")
+...   },
+...   {
+...     order_id: 2,
+...     customer_name: "Aarti Singh",
+...     shipping_address: { city: "Delhi", state: "Delhi" },
+...     items: [
+...       { product_name: "Laptop", quantity: 3, price: 50000 },
+...       { product_name: "Keyboard", quantity: 2, price: 1500 }
+...     ],
+...     order_date: new Date("2023-09-02")
+...   },
+...   {
+...     order_id: 3,
+...     customer_name: "Sunil Patel",
+...     shipping_address: { city: "Ahmedabad", state: "Gujarat" },
+...     items: [
+...       { product_name: "Laptop", quantity: 1, price: 50000 },
+...       { product_name: "Monitor", quantity: 4, price: 10000 }
+...     ],
+...     order_date: new Date("2023-09-05")
+...   },
+...   {
+...     order_id: 4,
+...     customer_name: "Priya Nair",
+...     shipping_address: { city: "Kochi", state: "Kerala" },
+...     items: [
+...       { product_name: "Monitor", quantity: 2, price: 10000 },
+...       { product_name: "Mouse", quantity: 5, price: 500 }
+...     ],
+...     order_date: new Date("2023-09-07")
+...   },
+...   {
+...     order_id: 5,
+...     customer_name: "Deepak Sharma",
+...     shipping_address: { city: "Jaipur", state: "Rajasthan" },
+...     items: [
+...       { product_name: "Keyboard", quantity: 6, price: 1500 },
+...       { product_name: "Mouse", quantity: 4, price: 500 }
+...     ],
+...     order_date: new Date("2023-09-10")
+...   }
+... ]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('66f920c210872ed025c73c06'),
+    '1': ObjectId('66f920c210872ed025c73c07'),
+    '2': ObjectId('66f920c210872ed025c73c08'),
+    '3': ObjectId('66f920c210872ed025c73c09'),
+    '4': ObjectId('66f920c210872ed025c73c0a')
+  }
+}
+
+
+4)Get the Total Number of Items Sold Per Product and Filter for Products Sold More Than 5 Times
+te31160_db> db.orders.aggregate([{$unwind:"$items"},{$group:{_id:"$items.product_name", totalQuantity:{$sum:"$items.quantity"}}},{$match:{totalQuantity:{$gt:5}}},{$sort:{totalQuantity:-1}}]);
+[
+  { _id: 'Mouse', totalQuantity: 10 },
+  { _id: 'Keyboard', totalQuantity: 8 },
+  { _id: 'Monitor', totalQuantity: 6 },
+  { _id: 'Laptop', totalQuantity: 6 }
+]
+te31160_db>
+5) Find Orders with High Total Value
+ db.orders.aggregate([{$unwind:"$items"},{$group:{_id:"$order_id", totalValue:{$sum:"$items.price"}}},{$match:{totalValue:{$gte:5000}}},{$project:{_id:1, totalValue:1}}]);
+[
+  { _id: 204, totalValue: 5000 },
+  { _id: 3, totalValue: 60000 },
+  { _id: 1, totalValue: 50500 },
+  { _id: 2, totalValue: 51500 },
+  { _id: 4, totalValue: 10500 }
+]
+
+
+6)Find the top 5 products sold in terms of quantity, but only include those sold more than 6 times.
+ db.orders.aggregate([{$unwind:"$items"},{$group:{_id:"$items.product_name",totalQuantity:{$sum:"$items.quantity"}}},{$sort:{totalQuantity:-1}},{$limit:5}]);
+[
+  { _id: 'Mouse', totalQuantity: 10 },
+  { _id: 'Keyboard', totalQuantity: 8 },
+  { _id: 'Monitor', totalQuantity: 6 },
+  { _id: 'Laptop', totalQuantity: 6 },
+  { _id: 'Mundu', totalQuantity: 3 }
+
+
+te31160_db> db.orders.aggregate([{$unwind:"$items"},{$group:{_id:"$items.product_name",totalQuantity:{$sum:"$items.quantity"}}},{$match:{totalQuantity:{$gt:6}}},{$sort:{totalQuantity:-1}},{$limit:5}]);
+[
+  { _id: 'Mouse', totalQuantity: 10 },
+  { _id: 'Keyboard', totalQuantity: 8 }
+]
+
+
+
+
+7) Group the orders by the date they were placed and calculate the total number of orders per day.
+te31160_db> db.orders.aggregate([{$group:{_id:{day:{$dateToString:{format:"%Y-%m-%d", date:"$order_date"}}},totalOrders:{$sum:1}}},{$sort:{"_id.day":1}}]);
+[
+  { _id: { day: null }, totalOrders: 9 },
+  { _id: { day: '2023-09-01' }, totalOrders: 1 },
+  { _id: { day: '2023-09-02' }, totalOrders: 1 },
+  { _id: { day: '2023-09-05' }, totalOrders: 1 },
+  { _id: { day: '2023-09-07' }, totalOrders: 1 },
+  { _id: { day: '2023-09-10' }, totalOrders: 1 }
+]
+
+
+8)Calculate the total revenue and quantity sold for each product, filter out products with less than 10000 in revenue, sort them, and then project the results.
+te31160_db> db.orders.aggregate([{$unwind:"$items"},{$group:{_id:"$items.product_name", totalRevenue:{$sum:"$items.price"}, totalQuantity:{$sum:"$items.quantity"}}},{$match:{totalRevenue:{$lt:10000}}},{$sort:{totalRevenue:-1}},{$project:{product_name:"$_id", totalRevenue:1, totalQuantity:1, _id:0}}]);
+[
+  { totalRevenue: 5000, totalQuantity: 1, product_name: 'Sherwani' },
+  {
+    totalRevenue: 3500,
+    totalQuantity: 2,
+    product_name: 'Pochampally Saree'
+  },
+  { totalRevenue: 3000, totalQuantity: 8, product_name: 'Keyboard' },
+  {
+    totalRevenue: 2000,
+    totalQuantity: 1,
+    product_name: 'Nehru Jacket'
+  },
+  { totalRevenue: 1800, totalQuantity: 1, product_name: 'Tant Saree' },
+  { totalRevenue: 1500, totalQuantity: 10, product_name: 'Mouse' },
+  { totalRevenue: 1200, totalQuantity: 1, product_name: 'Saree' },
+  { totalRevenue: 800, totalQuantity: 3, product_name: 'Mundu' },
+  { totalRevenue: 700, totalQuantity: 2, product_name: 'Pavadai' },
+  { totalRevenue: 500, totalQuantity: 2, product_name: 'Kurta' }
+]
+te31160_db> db.orders.aggregate([{$unwind:"$items"},{$group:{_id:"$items.product_name", totalRevenue:{$sum:"$items.price"}, totalQuantity:{$sum:"$items.quantity"}}},{$match:{totalRevenue:{$gt:10000}}},{$sort:{totalRevenue:-1}},{$project:{product_name:"$_id", totalRevenue:1, totalQuantity:1, _id:0}}]);
+[
+  { totalRevenue: 150000, totalQuantity: 6, product_name: 'Laptop' },
+  { totalRevenue: 20000, totalQuantity: 6, product_name: 'Monitor' }
+]
+
+
+9)Retrieve orders that have a total value of 5000 or more.
+te31160_db> db.orders.aggregate([{$unwind:"$items"},{$group:{_id:"$items.product_name", totalRevenue:{$sum:"$items.price"}}},{$match:{totalRevenue:{$gte:5000}}},{$project:{_id:1, totalRevenue:1}}]);
+[
+  { _id: 'Sherwani', totalRevenue: 5000 },
+  { _id: 'Laptop', totalRevenue: 150000 },
+  { _id: 'Monitor', totalRevenue: 20000 }
+]
+te31160_db>
+
+
+________________________________________________________________________
+
+
+Indexing:
+1)Simple Index:
+te31160_db> db.orders.createIndex({customer_name:1});
+Customer_name_1
+
+
+2)Compund Index:
+te31160_db> db.orders.createIndex({customer_name:1, order_date:-1});
+customer_name_1_order_date_-1
+
+
+
+
+3)Text Index:
+te31160_db> db.orders.ensureIndex({customer_name:"text", "shipping_address.city":"text"});
+[ 'customer_name_text_shipping_address.city_text' ]
+
+
+4)Unique Index:
+te31160_db> db.orders.createIndex({"customer_name":1, "order_date":1},{unique:true});
+customer_name_1_order_date_1
+
+
+te31160_db> db.orders.getIndexes();
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { customer_name: 1 }, name: 'customer_name_1' },
+  {
+    v: 2,
+    key: { customer_name: 1, order_date: -1 },
+    name: 'customer_name_1_order_date_-1'
+  },
+  {
+    v: 2,
+    key: { _fts: 'text', _ftsx: 1 },
+    name: 'customer_name_text_shipping_address.city_text',
+    weights: { customer_name: 1, 'shipping_address.city': 1 },
+    default_language: 'english',
+    language_override: 'language',
+    textIndexVersion: 3
+  },
+  {
+    v: 2,
+    key: { customer_name: 1, order_date: 1 },
+    name: 'customer_name_1_order_date_1',
+    unique: true
+  }
+]
+te31160_db>
+te31160_db> db.orders.find({ customer_name: "Rajesh Kumar" }).explain("executionStats");
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'te31160_db.orders',
+    parsedQuery: { customer_name: { '$eq': 'Rajesh Kumar' } },
+    indexFilterSet: false,
+    queryHash: 'F0374BB2',
+    planCacheKey: 'AD0BFCDC',
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: true,
+    winningPlan: {
+      isCached: false,
+      stage: 'FETCH',
+      inputStage: {
+        stage: 'IXSCAN',
+        keyPattern: { customer_name: 1 },
+        indexName: 'customer_name_1',
+        isMultiKey: false,
+        multiKeyPaths: { customer_name: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { customer_name: [ '["Rajesh Kumar", "Rajesh Kumar"]' ] }
+      }
+    },
+    rejectedPlans: [
+      {
+        isCached: false,
+        stage: 'FETCH',
+        inputStage: {
+          stage: 'IXSCAN',
+          keyPattern: { customer_name: 1, order_date: 1 },
+          indexName: 'customer_name_1_order_date_1',
+          isMultiKey: false,
+          multiKeyPaths: { customer_name: [], order_date: [] },
+          isUnique: true,
+          isSparse: false,
+          isPartial: false,
+          indexVersion: 2,
+          direction: 'forward',
+          indexBounds: {
+            customer_name: [ '["Rajesh Kumar", "Rajesh Kumar"]' ],
+            order_date: [ '[MinKey, MaxKey]' ]
+          }
+        }
+      }
+    ]
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 1,
+    executionTimeMillis: 28,
+    totalKeysExamined: 1,
+    totalDocsExamined: 1,
+    executionStages: {
+      isCached: false,
+      stage: 'FETCH',
+      nReturned: 1,
+      executionTimeMillisEstimate: 25,
+      works: 3,
+      advanced: 1,
+      needTime: 0,
+      needYield: 0,
+      saveState: 1,
+      restoreState: 1,
+      isEOF: 1,
+      docsExamined: 1,
+      alreadyHasObj: 0,
+      inputStage: {
+        stage: 'IXSCAN',
+        nReturned: 1,
+        executionTimeMillisEstimate: 25,
+        works: 2,
+        advanced: 1,
+        needTime: 0,
+        needYield: 0,
+        saveState: 1,
+        restoreState: 1,
+        isEOF: 1,
+        keyPattern: { customer_name: 1 },
+        indexName: 'customer_name_1',
+        isMultiKey: false,
+        multiKeyPaths: { customer_name: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { customer_name: [ '["Rajesh Kumar", "Rajesh Kumar"]' ] },
+        keysExamined: 1,
+        seeks: 1,
+        dupsTested: 0,
+        dupsDropped: 0
+      }
+    }
+  },
+  command: {
+    find: 'orders',
+    filter: { customer_name: 'Rajesh Kumar' },
+    '$db': 'te31160_db'
+  },
+  serverInfo: {
+    host: 'DESKTOP-6DH5CO1',
+    port: 27017,
+    version: '8.0.0',
+    gitVersion: 'd7cd03b239ac39a3c7d63f7145e91aca36f93db6'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 104857600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 104857600,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1
+}
+te31160_db>

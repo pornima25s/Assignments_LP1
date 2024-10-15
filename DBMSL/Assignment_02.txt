@@ -1,0 +1,350 @@
+ASSIGNMENT NO. 02
+NAME: DHANVANATARI PAWAR
+ROLL NO.: 31160
+----------------------------------------------------------------------
+
+-- Creating PlacementDrive table
+CREATE TABLE PlacementDrive (
+    Drive_id INT PRIMARY KEY,
+    Pcompany_name VARCHAR(100) NOT NULL,
+    package DECIMAL(10, 2) NOT NULL,
+    location VARCHAR(100) NOT NULL
+);
+
+-- Creating Training table
+CREATE TABLE Training (
+    T_id INT PRIMARY KEY,
+    Tcompany_name VARCHAR(100) NOT NULL,
+    T_Fee DECIMAL(10, 2) NOT NULL,
+    T_year INT NOT NULL
+);
+
+-- Creating Student table
+ CREATE TABLE Student (
+    ->     s_id INT PRIMARY KEY,
+    ->     Drive_id INT,
+    ->     T_id INT,
+    ->     s_name VARCHAR(100) NOT NULL,
+    ->     CGPA DECIMAL(3, 2) NOT NULL,
+    ->     s_branch VARCHAR(100) NOT NULL,
+    ->     S_dob DATE NOT NULL,
+    ->     FOREIGN KEY (Drive_id) REFERENCES PlacementDrive(Drive_id) ON DELETE CASCADE,
+    ->     FOREIGN KEY (T_id) REFERENCES Training(T_id) ON DELETE CASCADE
+    -> );
+	
+QUERY1-->	
+
+mysql>INSERT INTO Training (Tcompany_name, T_Fee, T_year) VALUES
+	('SkillForge', 16000, 2018),
+	('TechAdvance', 22000, 2017),
+	('LearnPlus', 27000, 2022),
+	('CodeMasters', 40000, 2019));
+
+mysql> INSERT INTO PlacementDrive (Pcompany_name, package, location) VALUES('TechCorp', 50000, 'Pune'),
+	-> (4, 'CodeMasters', 55000, 'Nagpur'),
+	-> (5, 'AlphaTech', 65000, 'Thane'),
+	-> (6, 'BetaSoft', 75000, 'Pune'));
+	
+	
+mysql> INSERT INTO Student (s_id, Drive_id, T_id, s_name, CGPA, s_branch, S_dob) VALUES
+    -> (1, 1, 1, 'Amit Sharma', 8.5, 'Computer', '2001-01-15'),
+    -> (2, 2, 2, 'Priya Patil', 9.0, 'ENTC', '2002-05-22'),
+    -> (3, 3, 3, 'Rajesh Kumar', 7.5, 'AIDS', '2003-03-10'),
+    -> (4, 1, 2, 'Anita Joshi', 8.0, 'IT', '2000-07-18'),
+    -> (5, 2, 1, 'Ravi Verma', 7.8, 'Computer', '2001-11-30'),
+    -> (6, 3, 2, 'Sita Reddy', 8.2, 'AIDS', '2002-04-12'),
+    -> (7, 1, 3, 'Deepak Singh', 6.8, 'IT', '2001-08-05'),
+    -> (8, 2, 1, 'Arjun Desai', 8.6, 'ENTC', '2002-09-25'),
+    -> (9, 3, 2, 'Dhruv Bhat', 8.1, 'IT', '2000-11-30'),
+    -> (10, 1, 3, 'Aditi Rao', 7.7, 'Computer', '2000-12-19'),
+    -> (11, 1, 1, 'Rahul Jain', 8.3, 'Computer', '2001-06-10'),
+    -> (12, 2, 2, 'Sonal Mehta', 8.9, 'ENTC', '2002-02-14'),
+    -> (13, 3, 3, 'Karan Malhotra', 7.2, 'AIDS', '2001-08-08'),
+    -> (14, 1, 2, 'Sneha Kapoor', 8.4, 'IT', '2000-10-21'),
+    -> (15, 2, 1, 'Varun Patel', 7.9, 'Computer', '2001-05-25'),
+	-> (16, 2, 6, 'Dhanvantari', 7, 'Computer', '2004-02-17')'
+	-> (17, 1, 3, 'Hrigved', 6, 'Computer' ,'2004-03-02');
+Query OK, 15 rows affected (0.01 sec)
+
+mysql> select * from Student;
++------+----------+------+----------------+------+----------+------------+
+| s_id | Drive_id | T_id | s_name         | CGPA | s_branch | S_dob      |
++------+----------+------+----------------+------+----------+------------+
+|    1 |        1 |    1 | Amit Sharma    | 8.50 | Computer | 2001-01-15 |
+|    2 |        2 |    2 | Priya Patil    | 9.00 | IT       | 2002-05-22 |
+|    3 |        3 |    3 | Rajesh Kumar   | 7.50 | ENTC     | 2003-03-10 |
+|    4 |        1 |    2 | Anita Joshi    | 8.00 | IT       | 2004-07-18 |
+|    5 |        2 |    1 | Ravi Verma     | 7.80 | Computer | 2005-11-30 |
+|    6 |        3 |    2 | Sita Reddy     | 8.20 | AIDS     | 2006-04-12 |
+|    8 |        2 |    1 | Arjun Desai    | 8.60 | ENTC     | 2008-09-25 |
+|    9 |        3 |    2 | Dhruv Bhat     | 8.10 | IT       | 2009-11-30 |
+|   10 |        1 |    3 | Aditi Rao      | 7.70 | Computer | 2010-12-19 |
+|   11 |        1 |    1 | Rahul Jain     | 8.30 | Computer | 2011-06-10 |
+|   12 |        2 |    2 | Sonal Mehta    | 8.90 | ENTC     | 2012-02-14 |
+|   13 |        3 |    3 | Karan Malhotra | 7.20 | AIDS     | 2013-08-08 |
+|   14 |        1 |    2 | Sneha Kapoor   | 8.40 | IT       | 2014-10-21 |
+|   15 |        2 |    1 | Varun Patel    | 7.90 | Computer | 2015-05-25 |
+|   16 |        2 |    2 | Dhanvantari    | 6.00 | Computer | 2004-02-17 |
++------+----------+------+----------------+------+----------+------------+
+15 rows in set (0.00 sec)
+mysql> select * from Training;
++------+---------------+-------+--------+
+| T_id | Tcompany_name | T_Fee | T_year |
++------+---------------+-------+--------+
+|    1 | SkillForge    | 16000 |   2018 |
+|    2 | TechAdvance   | 22000 |   2017 |
+|    3 | LearnPlus     | 27000 |   2022 |
+|    4 | CodeMasters   | 40000 |   2019 |
++------+---------------+-------+--------+
+4 rows in set (0.00 sec)
+
+
+mysql> select * from PlacementDrive;
++----------+---------------+---------+----------+
+| Drive_id | Pcompany_name | package | location |
++----------+---------------+---------+----------+
+|        1 | CodeMasters   |   55000 | Nagpur   |
+|        2 | AlphaTech     |   65000 | Thane    |
+|        3 | BetaSoft      |   75000 | Pune     |
++----------+---------------+---------+----------+
+3 rows in set (0.00 sec)
+
+Query2 -->
+mysql> select * from Student where s_branch In('Computer' , 'IT') AND (s_name like 'A%' or 'D%');
++------+----------+------+-------------+------+----------+------------+
+| s_id | Drive_id | T_id | s_name      | CGPA | s_branch | S_dob      |
++------+----------+------+-------------+------+----------+------------+
+|    1 |        1 |    1 | Amit Sharma | 8.50 | Computer | 2001-01-15 |
+|    4 |        1 |    2 | Anita Joshi | 8.00 | IT       | 2000-07-18 |
+|   10 |        1 |    3 | Aditi Rao   | 7.70 | Computer | 2000-12-19 |
++------+----------+------+-------------+------+----------+------------+
+3 rows in set, 1 warning (0.00 sec)
+
+Query3 --->
+mysql> select distinct pcompany_name from PlacementDrive;
++---------------+
+| pcompany_name |
++---------------+
+| CodeMasters   |
+| AlphaTech     |
+| BetaSoft      |
++---------------+
+3 rows in set (0.00 sec)
+
+Query4 -->
+mysql> Update Training set T_Fee = 1.5* T_Fee Where T_year = 2019;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from Training;
++------+---------------+-------+--------+
+| T_id | Tcompany_name | T_Fee | T_year |
++------+---------------+-------+--------+
+|    1 | SkillForge    | 16000 |   2018 |
+|    2 | TechAdvance   | 22000 |   2017 |
+|    3 | LearnPlus     | 27000 |   2022 |
+|    4 | CodeMasters   | 60000 |   2019 |
++------+---------------+-------+--------+
+4 rows in set (0.00 sec)
+
+Query5 -->
+mysql> delete from Student where CGPA < 7;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from Student;
++------+----------+------+----------------+------+----------+------------+
+| s_id | Drive_id | T_id | s_name         | CGPA | s_branch | S_dob      |
++------+----------+------+----------------+------+----------+------------+
+|    1 |        1 |    1 | Amit Sharma    | 8.50 | Computer | 2001-01-15 |
+|    2 |        2 |    2 | Priya Patil    | 9.00 | ENTC     | 2002-05-22 |
+|    3 |        3 |    3 | Rajesh Kumar   | 7.50 | AIDS     | 2003-03-10 |
+|    4 |        1 |    2 | Anita Joshi    | 8.00 | IT       | 2000-07-18 |
+|    5 |        2 |    1 | Ravi Verma     | 7.80 | Computer | 2001-11-30 |
+|    6 |        3 |    2 | Sita Reddy     | 8.20 | AIDS     | 2002-04-12 |
+|    8 |        2 |    1 | Arjun Desai    | 8.60 | ENTC     | 2002-09-25 |
+|    9 |        3 |    2 | Dhruv Bhat     | 8.10 | IT       | 2000-11-30 |
+|   10 |        1 |    3 | Aditi Rao      | 7.70 | Computer | 2000-12-19 |
+|   11 |        1 |    1 | Rahul Jain     | 8.30 | Computer | 2001-06-10 |
+|   12 |        2 |    2 | Sonal Mehta    | 8.90 | ENTC     | 2002-02-14 |
+|   13 |        3 |    3 | Karan Malhotra | 7.20 | AIDS     | 2001-08-08 |
+|   14 |        1 |    2 | Sneha Kapoor   | 8.40 | IT       | 2000-10-21 |
+|   15 |        2 |    1 | Varun Patel    | 7.90 | Computer | 2001-05-25 |
+|------+----------+------+----------------+------+----------+------------+
+15 rows in set (0.00 sec)
+
+Query6 -->
+
+mysql> select * from placementDrive where location In ('Pune', 'Mumbai');
++----------+---------------+---------+----------+
+| Drive_id | Pcompany_name | package | location |
++----------+---------------+---------+----------+
+|        3 | BetaSoft      |   75000 | Pune     |
++----------+---------------+---------+----------+
+1 row in set (0.00 sec)
+
+Query7 -->
+mysql> SELECT s_name FROM Student
+    -> WHERE T_id IN (
+    ->     SELECT T_id FROM Training WHERE T_year IN (2019, 2021)
+    -> );
++-----------+
+| s_name    |
++-----------+
+| Aditi Rao |
++-----------+
+1 row in set (0.00 sec)
+
+Query8 -->
+mysql> select s_name , CGPA from Student where CGPA = (Select max(CGPA) from Student);
++-------------+------+
+| s_name      | CGPA |
++-------------+------+
+| Priya Patil | 9.00 |
++-------------+------+
+1 row in set (0.01 sec)
+
+mysql> select s_name , CGPA from Student where CGPA between 7 and 9;
++----------------+------+
+| s_name         | CGPA |
++----------------+------+
+| Amit Sharma    | 8.50 |
+| Priya Patil    | 9.00 |
+| Rajesh Kumar   | 7.50 |
+| Anita Joshi    | 8.00 |
+| Ravi Verma     | 7.80 |
+| Sita Reddy     | 8.20 |
+| Arjun Desai    | 8.60 |
+| Dhruv Bhat     | 8.10 |
+| Aditi Rao      | 7.70 |
+| Rahul Jain     | 8.30 |
+| Sonal Mehta    | 8.90 |
+| Karan Malhotra | 7.20 |
+| Sneha Kapoor   | 8.40 |
+| Varun Patel    | 7.90 |
++----------------+------+
+14 rows in set (0.00 sec)
+
+Query9 -->
+mysql> select s_name from Student ORDER BY (Select T_Fee from Training Where Training. T_id = Student.T_id) DESC;
++----------------+
+| s_name         |
++----------------+
+| Aditi Rao      |
+| Rajesh Kumar   |
+| Karan Malhotra |
+| Priya Patil    |
+| Anita Joshi    |
+| Sita Reddy     |
+| Dhruv Bhat     |
+| Sonal Mehta    |
+| Sneha Kapoor   |
+| Amit Sharma    |
+| Ravi Verma     |
+| Arjun Desai    |
+| Rahul Jain     |
+| Varun Patel    |
++----------------+
+14 rows in set (0.00 sec)
+
+Query10 -->
+mysql> select Pcompany_name , s_name from PlacementDrive, Student where PlacementDrive.Drive_id = Student.Drive_id AND package IN(30000, 40000, 50000);
+Empty set (0.00 sec)
+
+
+
+Creating View:
+
+mysql> CREATE VIEW StudentView AS SELECT s.s_id, s.s_name, s.CGPA, s.S_dob, p.Pcompany_name, p.package, p.location, t.Tcompany_name, t.T_Fee, t.T_year FROM student s JOIN PlacementDrive p ON s.Drive_id = p.Drive_id JOIN Training t ON s.T_id = t.T_id;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from StudentView;
++------+----------------+------+------------+---------------+---------+----------+---------------+-------+--------+
+| s_id | s_name         | CGPA | S_dob      | Pcompany_name | package | location | Tcompany_name | T_Fee | T_year |
++------+----------------+------+------------+---------------+---------+----------+---------------+-------+--------+
+|    1 | Amit Sharma    | 8.50 | 2001-01-15 | CodeMasters   |   55000 | Nagpur   | SkillForge    | 16000 |   2018 |
+|    4 | Anita Joshi    | 8.00 | 2004-07-18 | CodeMasters   |   55000 | Nagpur   | TechAdvance   | 22000 |   2017 |
+|   10 | Aditi Rao      | 7.70 | 2010-12-19 | CodeMasters   |   55000 | Nagpur   | CodeMasters   | 60000 |   2019 |
+|   11 | Rahul Jain     | 8.30 | 2011-06-10 | CodeMasters   |   55000 | Nagpur   | SkillForge    | 16000 |   2018 |
+|   14 | Sneha Kapoor   | 8.40 | 2014-10-21 | CodeMasters   |   55000 | Nagpur   | TechAdvance   | 22000 |   2017 |
+|    2 | Priya Patil    | 9.00 | 2002-05-22 | AlphaTech     |   65000 | Thane    | TechAdvance   | 22000 |   2017 |
+|    5 | Ravi Verma     | 7.80 | 2005-11-30 | AlphaTech     |   65000 | Thane    | SkillForge    | 16000 |   2018 |
+|    8 | Arjun Desai    | 8.60 | 2008-09-25 | AlphaTech     |   65000 | Thane    | SkillForge    | 16000 |   2018 |
+|   12 | Sonal Mehta    | 8.90 | 2012-02-14 | AlphaTech     |   65000 | Thane    | TechAdvance   | 22000 |   2017 |
+|   15 | Varun Patel    | 7.90 | 2015-05-25 | AlphaTech     |   65000 | Thane    | SkillForge    | 16000 |   2018 |
+|    3 | Rajesh Kumar   | 7.50 | 2003-03-10 | BetaSoft      |   75000 | Pune     | LearnPlus     | 27000 |   2022 |
+|    6 | Sita Reddy     | 8.20 | 2006-04-12 | BetaSoft      |   75000 | Pune     | TechAdvance   | 22000 |   2017 |
+|    9 | Dhruv Bhat     | 8.10 | 2009-11-30 | BetaSoft      |   75000 | Pune     | TechAdvance   | 22000 |   2017 |
+|   13 | Karan Malhotra | 7.20 | 2013-08-08 | BetaSoft      |   75000 | Pune     | LearnPlus     | 27000 |   2022 |
++------+----------------+------+------------+---------------+---------+----------+---------------+-------+--------+
+14 rows in set (0.00 sec)
+
+Creating Index: 
+
+mysql> CREATE INDEX sname_idx ON Student(s_name);
+Query OK, 0 rows affected (0.04 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> Explain select * FROM Student Where s_name = "Rahul Jain";
++----+-------------+---------+------------+------+---------------+-----------+---------+-------+------+----------+-------+
+| id | select_type | table   | partitions | type | possible_keys | key       | key_len | ref   | rows | filtered | Extra |
++----+-------------+---------+------------+------+---------------+-----------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | Student | NULL       | ref  | sname_idx     | sname_idx | 402     | const |    1 |   100.00 | NULL  |
++----+-------------+---------+------------+------+---------------+-----------+---------+-------+------+----------+-------+
+1 row in set, 1 warning (0.01 sec)
+
+mysql> CREATE INDEX comp_idx ON PlacementDrive(Drive_id, Pcompany_name);
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> Explain select * FROM PlacementDrive WHERE Drive_id = 2;
++----+-------------+----------------+------------+-------+------------------+---------+---------+-------+------+----------+-------+
+| id | select_type | table          | partitions | type  | possible_keys    | key     | key_len | ref   | rows | filtered | Extra |
++----+-------------+----------------+------------+-------+------------------+---------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | PlacementDrive | NULL       | const | PRIMARY,comp_idx | PRIMARY | 4       | const |    1 |   100.00 | NULL  |
++----+-------------+----------------+------------+-------+------------------+---------+---------+-------+------+----------+-------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> CREATE UNIQUE INDEX name ON Student (s_name);
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> Explain select * FROM Student WHERE s_name = "Arjun Desai";
++----+-------------+---------+------------+-------+----------------+------+---------+-------+------+----------+-------+
+| id | select_type | table   | partitions | type  | possible_keys  | key  | key_len | ref   | rows | filtered | Extra |
++----+-------------+---------+------------+-------+----------------+------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | Student | NULL       | const | name,sname_idx | name | 402     | const |    1 |   100.00 | NULL  |
++----+-------------+---------+------------+-------+----------------+------+---------+-------+------+----------+-------+
+1 row in set, 1 warning (0.00 sec)
+
+
+Creating Sequence: 
+
+mysql> CREATE TABLE SHOP (id INT AUTO_INCREMENT, Product varchar(30), PRIMARY KEY(id));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> Insert into SHOP (Product) values(("Saloon"));
+Query OK, 1 row affected (0.00 sec)
+
+mysql> Insert into SHOP (Product) values(("Grocerry"));
+Query OK, 1 row affected (0.01 sec)
+
+mysql> Insert into SHOP (Product) values(("Garments"));
+Query OK, 1 row affected (0.01 sec)
+
+mysql> Insert into SHOP (Product) values(("Electronics"));
+Query OK, 1 row affected (0.01 sec)
+
+mysql> Insert into SHOP (Product) values(("Sports"));
+Query OK, 1 row affected (0.01 sec)
+
+mysql> Select * FROM SHOP;
++----+-------------+
+| id | Product     |
++----+-------------+
+|  1 | Saloon      |
+|  2 | Grocerry    |
+|  3 | Garments    |
+|  4 | Electronics |
+|  5 | Sports      |
++----+-------------+
+5 rows in set (0.00 sec)
