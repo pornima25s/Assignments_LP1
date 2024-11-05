@@ -1,0 +1,198 @@
+To explore MongoDB's aggregation and indexing capabilities in a medical context, let’s create a schema for doctors and define collections for storing relevant data about doctors, their specialties, patients, and appointments. We’ll then explore 10 different aggregation queries and 10 indexing examples, covering various features of both.
+
+Step 1: Create the doctors Collection
+First, we need to create the doctors collection.
+
+javascript
+Copy code
+db.createCollection("doctors")
+Step 2: Insert Sample Data into the doctors Collection
+Here’s some sample data that we’ll use for aggregation and indexing queries:
+
+javascript
+Copy code
+db.doctors.insertMany([
+  {
+    "doctorId": "D1001",
+    "name": "Dr. John Doe",
+    "specialty": "Cardiology",
+    "experience": 15,
+    "patients": [
+      { "patientId": "P2001", "name": "Alice", "age": 45, "visits": 10 },
+      { "patientId": "P2002", "name": "Bob", "age": 50, "visits": 5 }
+    ],
+    "appointments": [
+      { "appointmentId": "A3001", "date": new Date("2023-07-10"), "status": "Completed" },
+      { "appointmentId": "A3002", "date": new Date("2023-08-15"), "status": "Pending" }
+    ]
+  },
+  {
+    "doctorId": "D1002",
+    "name": "Dr. Jane Smith",
+    "specialty": "Neurology",
+    "experience": 10,
+    "patients": [
+      { "patientId": "P2003", "name": "Chris", "age": 60, "visits": 2 },
+      { "patientId": "P2004", "name": "Diana", "age": 35, "visits": 8 }
+    ],
+    "appointments": [
+      { "appointmentId": "A3003", "date": new Date("2023-08-20"), "status": "Completed" },
+      { "appointmentId": "A3004", "date": new Date("2023-09-15"), "status": "Pending" }
+    ]
+  },
+  {
+    "doctorId": "D1003",
+    "name": "Dr. Emily Clark",
+    "specialty": "Orthopedics",
+    "experience": 20,
+    "patients": [
+      { "patientId": "P2005", "name": "Ethan", "age": 40, "visits": 6 },
+      { "patientId": "P2006", "name": "Fiona", "age": 55, "visits": 9 }
+    ],
+    "appointments": [
+      { "appointmentId": "A3005", "date": new Date("2023-10-10"), "status": "Completed" },
+      { "appointmentId": "A3006", "date": new Date("2023-11-15"), "status": "Pending" }
+    ]
+  }
+]);
+10 Aggregation Queries
+Count Total Patients for Each Doctor
+
+javascript
+Copy code
+db.doctors.aggregate([
+  { $unwind: "$patients" },
+  { $group: { _id: "$name", totalPatients: { $sum: 1 } } }
+]);
+Calculate Average Age of Patients by Doctor Specialty
+
+javascript
+Copy code
+db.doctors.aggregate([
+  { $unwind: "$patients" },
+  { $group: { _id: "$specialty", avgPatientAge: { $avg: "$patients.age" } } }
+]);
+Find the Total Visits per Doctor
+
+javascript
+Copy code
+db.doctors.aggregate([
+  { $unwind: "$patients" },
+  { $group: { _id: "$doctorId", totalVisits: { $sum: "$patients.visits" } } }
+]);
+Get Doctors with More Than 10 Years of Experience
+
+javascript
+Copy code
+db.doctors.aggregate([
+  { $match: { experience: { $gt: 10 } } },
+  { $project: { doctorId: 1, name: 1, specialty: 1, experience: 1 } }
+]);
+List All Appointments by Date in Ascending Order
+
+javascript
+Copy code
+db.doctors.aggregate([
+  { $unwind: "$appointments" },
+  { $sort: { "appointments.date": 1 } },
+  { $project: { doctorId: 1, "appointments.date": 1, "appointments.status": 1 } }
+]);
+Count Completed and Pending Appointments per Doctor
+
+javascript
+Copy code
+db.doctors.aggregate([
+  { $unwind: "$appointments" },
+  { $group: { _id: { doctor: "$name", status: "$appointments.status" }, count: { $sum: 1 } } },
+  { $sort: { "_id.doctor": 1, "_id.status": 1 } }
+]);
+Calculate the Maximum Experience of Doctors in Each Specialty
+
+javascript
+Copy code
+db.doctors.aggregate([
+  { $group: { _id: "$specialty", maxExperience: { $max: "$experience" } } }
+]);
+Find the Doctor with the Most Patients
+
+javascript
+Copy code
+db.doctors.aggregate([
+  { $project: { name: 1, numPatients: { $size: "$patients" } } },
+  { $sort: { numPatients: -1 } },
+  { $limit: 1 }
+]);
+Find Average Visits per Patient for Each Doctor
+
+javascript
+Copy code
+db.doctors.aggregate([
+  { $unwind: "$patients" },
+  { $group: { _id: "$doctorId", avgVisits: { $avg: "$patients.visits" } } }
+]);
+Get Doctor and Appointment Details for Upcoming Appointments
+
+javascript
+Copy code
+db.doctors.aggregate([
+  { $unwind: "$appointments" },
+  { $match: { "appointments.date": { $gt: new Date() } } },
+  { $project: { doctorId: 1, name: 1, "appointments.date": 1, "appointments.status": 1 } }
+]);
+10 Indexing Queries
+Single Field Index on Doctor Specialty
+
+javascript
+Copy code
+db.doctors.createIndex({ specialty: 1 });
+Single Field Index on Experience
+
+javascript
+Copy code
+db.doctors.createIndex({ experience: 1 });
+Compound Index on Doctor Specialty and Experience
+
+javascript
+Copy code
+db.doctors.createIndex({ specialty: 1, experience: -1 });
+Text Index on Doctor Name for Search
+
+javascript
+Copy code
+db.doctors.createIndex({ name: "text" });
+Multikey Index on Patients Array for Efficient Patient Queries
+
+javascript
+Copy code
+db.doctors.createIndex({ "patients.patientId": 1 });
+Index on Appointments Date for Fast Access to Upcoming Appointments
+
+javascript
+Copy code
+db.doctors.createIndex({ "appointments.date": 1 });
+Partial Index on Completed Appointments Only
+
+javascript
+Copy code
+db.doctors.createIndex({ "appointments.status": 1 }, { partialFilterExpression: { "appointments.status": "Completed" } });
+TTL Index on Appointment Date for Auto-Removing Old Appointments
+
+javascript
+Copy code
+db.doctors.createIndex({ "appointments.date": 1 }, { expireAfterSeconds: 31536000 }); // 1 year TTL
+Unique Index on Doctor ID
+
+javascript
+Copy code
+db.doctors.createIndex({ doctorId: 1 }, { unique: true });
+Wildcard Index for Dynamic Fields within Appointments
+
+javascript
+Copy code
+db.doctors.createIndex({ "appointments.$**": 1 });
+Summary
+These queries showcase MongoDB's aggregation and indexing capabilities:
+
+Aggregation allows you to calculate summaries, averages, counts, and custom projections.
+Indexing improves query performance by organizing data for quick access based on fields like specialty, experience, and embedded fields in arrays.
+This setup should give a thorough foundation in managing and querying a doctor's database in MongoDB.

@@ -1,9 +1,5 @@
-Assignment No. 12
-Name: Dhanvantari Pawar
-Roll No. : 31160
+package CommonConnection; //first line    src mdhe pacage asel tyach nav
 
-
-package CommonConnection;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -19,7 +15,7 @@ import com.mongodb.MongoCredential;
 public class JavaMongoDBConnection {
 public static void main(String args[]) {
 try {
-MongoClient mclient = new MongoClient(new MongoClientURI("mongodb://te31160:te31160@10.10.13.97:27017/te31160_db"));
+MongoClient mclient = new MongoClient(new MongoClientURI("mongodb://te31160:te31160@10.10.13.97:27017/te31160_db"));     //mongodb://(username):(Password))@(ip addr):(port no)/(db name)
 MongoDatabase db = mclient.getDatabase("te31160_db");
 MongoCollection<Document> col = db.getCollection("Order");
 System.out.println("1. Insert\n 2. Delete\n 3. Update");
@@ -68,3 +64,20 @@ System.out.println(e);
 }
 }
 }
+
+
+
+
+------------------------------------------------------------
+on terminal
+by chatgpt 
+
+use te31160_db
+
+db.Order.insertMany([
+  { "Order_id": "1001", "Pname": "Laptop" },
+  { "Order_id": "1002", "Pname": "Mouse" },
+  { "Order_id": "1003", "Pname": "Keyboard" }
+]);
+
+db.Order.find().pretty()

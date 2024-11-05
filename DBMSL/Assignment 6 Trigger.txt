@@ -1,50 +1,11 @@
-mysql> show databases;
-+--------------------+
-| Database           |
-+--------------------+
-| information_schema |
-| mysql              |
-| performance_schema |
-| sys                |
-+--------------------+
-4 rows in set (0.15 sec)
+ DatabaseTrigger(AllTypes:RowlevelandStatement level triggers,Before
+ andAfterTriggers).
+ WriteadatabasetriggeronLibrarytable.TheSystemshouldkeeptrackoftherecords
+ that arebeingupdatedordeleted.Theoldvalueofupdatedordeletedrecordsshould
+ beaddedinLibrary_Audittable.
+ Note: Instructorwill Frame theproblemstatement forwritingPL/SQLblock for all
+ typesofTriggersinlinewithabovestatement.
 
-mysql> show tables;
-ERROR 1046 (3D000): No database selected
-mysql> create database ground;
-Query OK, 1 row affected (0.13 sec)
-
-mysql> show databases;
-+--------------------+
-| Database           |
-+--------------------+
-| ground             |
-| information_schema |
-| mysql              |
-| performance_schema |
-| sys                |
-+--------------------+
-5 rows in set (0.01 sec)
-
-mysql> drop database ground;
-Query OK, 0 rows affected (0.08 sec)
-
-mysql> show databases;
-+--------------------+
-| Database           |
-+--------------------+
-| information_schema |
-| mysql              |
-| performance_schema |
-| sys                |
-+--------------------+
-4 rows in set (0.00 sec)
-
-mysql> CREATE DATABASE IF NOT EXISTS te31475_db;
-Query OK, 1 row affected (0.15 sec)
-
-mysql> use te31475_db;
-Database changed
 
 mysql> CREATE TABLE Library (
     ->     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -93,6 +54,8 @@ mysql> CREATE TRIGGER before_library_delete
 Query OK, 0 rows affected (0.02 sec)
 
 mysql> DELIMITER ;
+
+
 
 mysql> INSERT INTO Library (book_name, available_copies) VALUES ('Database Systems', 10);
 Query OK, 1 row affected (0.05 sec)
@@ -170,14 +133,13 @@ mysql> SELECT * FROM Library_Audit;
 
 mysql> DELIMITER //
 mysql>
-mysql> CREATE TRIGGER after_library_update
-    -> AFTER UPDATE ON Library
-    -> FOR EACH ROW
-    -> BEGIN
-    ->     -- Insert the new values into Library_Audit after the update
-    ->     INSERT INTO Library_Audit (book_id, old_book_name, old_available_copies, action)
-    ->     VALUES (NEW.id, NEW.book_name, NEW.available_copies, 'UPDATED AFTER');
-    -> END; //
+mysql>CREATE TRIGGER after_library_update
+        AFTER UPDATE ON Library
+        FOR EACH ROW
+        BEGIN
+            INSERT INTO Library_Audit (book_id, old_book_name, old_available_copies, action)
+            VALUES (OLD.id, OLD.book_name, OLD.available_copies, 'AFTER UPDATE');
+        END; //
 Query OK, 0 rows affected (0.05 sec)
 
 mysql>
@@ -278,7 +240,25 @@ mysql> SELECT *FROM Library_Audit;
 
 
 
+//for insert
 
+-- BEFORE INSERT Trigger
+CREATE TRIGGER before_library_insert
+BEFORE INSERT ON Library
+FOR EACH ROW
+BEGIN
+    INSERT INTO Library_Audit (book_id, old_book_name, old_available_copies, action)
+    VALUES (NEW.id, NEW.book_name, NEW.available_copies, 'BEFORE INSERT');
+END; //
+
+-- AFTER INSERT Trigger
+CREATE TRIGGER after_library_insert
+AFTER INSERT ON Library
+FOR EACH ROW
+BEGIN
+    INSERT INTO Library_Audit (book_id, old_book_name, old_available_copies, action)
+    VALUES (NEW.id, NEW.book_name, NEW.available_copies, 'AFTER INSERT');
+END; //
 
 
 

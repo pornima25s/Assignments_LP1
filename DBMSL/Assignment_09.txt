@@ -1,9 +1,4 @@
-﻿Assignment B1
-Roll No.:31160
-Name:Dhanvantari Pawar
-
-
-
+﻿
 
 test> show dbs
 admin   40.00 KiB
@@ -110,7 +105,7 @@ te31160_db> db.orders.insertMany([
 ...   },
 ...   {
 ...     order_id: 208,
-...     customer_name: "Narendra Joshi",
+...     customer_name: "Narendra Joshi",                                            
 ...     shipping_address: {
 ...       street: "123 FC Road",
 ...       city: "Pune",
@@ -166,6 +161,7 @@ te31160_db> db.orders.insertMany([
 
 
 1)Find Orders with Price Greater Than a Value ($gt)
+
 te31160_db> db.orders.find({"items.price":{$gt:1500}});
 [
   {

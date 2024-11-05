@@ -1,0 +1,255 @@
+map redure for doctor
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+Step 1: Create the patients Collection
+
+
+db.createCollection("patients")
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+Step 2: Insert Sample Data into the patients Collection
+
+
+
+db.patients.insertMany([
+  {
+    "patientName": "John Doe",
+    "doctor": "Dr. Smith",
+    "treatmentCost": 500,
+    "hoursSpent": 2
+  },
+  {
+    "patientName": "Jane Doe",
+    "doctor": "Dr. Smith",
+    "treatmentCost": 1500,
+    "hoursSpent": 3
+  },
+  {
+    "patientName": "Mary Johnson",
+    "doctor": "Dr. Johnson",
+    "treatmentCost": 200,
+    "hoursSpent": 1
+  },
+  {
+    "patientName": "Mike Davis",
+    "doctor": "Dr. Smith",
+    "treatmentCost": 750,
+    "hoursSpent": 4
+  },
+  {
+    "patientName": "Alice Brown",
+    "doctor": "Dr. Johnson",
+    "treatmentCost": 300,
+    "hoursSpent": 1.5
+  },
+  {
+    "patientName": "Bob White",
+    "doctor": "Dr. Smith",
+    "treatmentCost": 1000,
+    "hoursSpent": 2.5
+  }
+])
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Step 3: Define Map and Reduce Functions
+With our sample data in place, we can now use MapReduce to analyze it. Let’s explore a few examples relevant to a medical context.
+
+Example 1: Calculate Total Treatment Cost per Doctor
+In this example, we’ll calculate the total treatment cost for each doctor.
+
+Map Function
+This function emits the doctor’s name as the key and the treatment cost as the value:
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+var mapFunctionCost = function() {
+  emit(this.doctor, this.treatmentCost);
+};
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+Reduce Function
+This function sums up the treatment costs for each doctor:
+
+
+
+var reduceFunctionCost = function(key, values) {
+  return Array.sum(values);
+};
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Execute MapReduce
+To run the MapReduce command, execute:
+
+db.patients.mapReduce(
+  mapFunctionCost,
+  reduceFunctionCost,
+  { out: "total_treatment_cost_per_doctor" }
+)
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+View Results
+
+
+db.total_treatment_cost_per_doctor.find()
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+Expected output:
+
+
+{ "_id" : "Dr. Smith", "value" : 3750 }
+{ "_id" : "Dr. Johnson", "value" : 500 }
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Example 2: Calculate Total Consultation Hours per Doctor
+Let’s now calculate the total number of hours each doctor has spent on consultations.
+
+Map Function
+The map function emits the doctor’s name and the hours spent:
+
+var mapFunctionHours = function() {
+  emit(this.doctor, this.hoursSpent);
+};
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+Reduce Function
+The reduce function sums up the consultation hours for each doctor:
+
+var reduceFunctionHours = function(key, values) {
+  return Array.sum(values);
+};
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Execute MapReduce
+To execute:
+
+db.patients.mapReduce(
+  mapFunctionHours,
+  reduceFunctionHours,
+  { out: "total_hours_per_doctor" }
+)
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+View Results
+To view the results:
+
+db.total_hours_per_doctor.find()
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Expected output:
+
+{ "_id" : "Dr. Smith", "value" : 11.5 }
+{ "_id" : "Dr. Johnson", "value" : 2.5 }
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Example 3: Count the Number of Patients per Doctor
+This MapReduce example calculates how many patients each doctor has attended to.
+
+Map Function
+The map function emits the doctor’s name and a count of 1 for each patient:
+
+javascript
+Copy code
+var mapFunctionCount = function() {
+  emit(this.doctor, 1);
+};
+Reduce Function
+The reduce function adds up the counts to get the total number of patients per doctor:
+
+javascript
+Copy code
+var reduceFunctionCount = function(key, values) {
+  return Array.sum(values);
+};
+Execute MapReduce
+To run this query:
+
+javascript
+Copy code
+db.patients.mapReduce(
+  mapFunctionCount,
+  reduceFunctionCount,
+  { out: "patient_count_per_doctor" }
+)
+View Results
+To check the output:
+
+javascript
+Copy code
+db.patient_count_per_doctor.find()
+Expected output:
+
+json
+Copy code
+{ "_id" : "Dr. Smith", "value" : 4 }
+{ "_id" : "Dr. Johnson", "value" : 2 }
+Step 4: Using Inline Output
+If you want the results directly without creating a new collection, use the inline output option. For example:
+
+javascript
+Copy code
+db.patients.mapReduce(
+  mapFunctionCount,
+  reduceFunctionCount,
+  { out: { inline: 1 } }
+)
+This will display the results immediately in the console rather than saving them to a collection.
+
+Step 5: Additional Tips
+Performance: While MapReduce is powerful, MongoDB's aggregation framework is generally more efficient for most types of aggregations.
+Complex Transformations: MapReduce is ideal for complex data transformations or aggregations that require custom JavaScript code.
+Summary
+Define a Map Function: This function emits key-value pairs based on document fields.
+Define a Reduce Function: The reduce function processes the values associated with each key.
+Run MapReduce: Use db.collection.mapReduce(mapFunction, reduceFunction, { out: "outputCollection" }).
+View Results: Query the output collection or use inline for immediate results without a collection.
+Using these MapReduce techniques, you can efficiently analyze and process medical data stored in MongoDB.

@@ -1,3 +1,4 @@
+ Cursors:
 
 mysql> CREATE TABLE source_table (
     ->     id INT,

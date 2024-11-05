@@ -1,284 +1,104 @@
+package jdbc; //should be on first line
 import java.sql.*;
-
-public class DbConproj {
-    
-    public static void main(String[] args) {
-        DbConproj dbConproj = new DbConproj();
-        dbConproj.selectData();
-        dbConproj.insertData(3);
-        dbConproj.updateData(2, "abc");
-        dbConproj.deleteData(3);
-    }
-
-    // Method to select data from the table
-    public void selectData() {
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet resultSet = null;
-
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/sakila",
-                "root", "system");
-
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery("select * from con1");
-
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                System.out.println("id : " + id);
-            }
-        } catch (Exception exception) {
-            System.out.println(exception);
-        } finally {
-            try {
-                if (resultSet != null) resultSet.close();
-                if (statement != null) statement.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                System.out.println(e);
-            }
-        }
-    }
-
-    // Method to insert data into the table
-    public void insertData(int id) {
-        Connection connection = null;
-        Statement statement = null;
-
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/sakila",
-                "root", "system");
-
-            statement = connection.createStatement();
-            int rowsAffected = statement.executeUpdate(
-                "INSERT INTO con1 VALUES (" + id + ")");
-
-            System.out.println("Inserted " + rowsAffected + " row(s).");
-        } catch (Exception exception) {
-            System.out.println(exception);
-        } finally {
-            try {
-                if (statement != null) statement.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                System.out.println(e);
-            }
-        }
-    }
-
-    // Method to update data in the table
-    public void updateData(int id, String name) {
-        Connection connection = null;
-        Statement statement = null;
-
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/sakila",
-                "root", "system");
-
-            statement = connection.createStatement();
-            int rowsAffected = statement.executeUpdate(
-                "UPDATE con1 SET name='" + name + "' WHERE id=" + id);
-
-            System.out.println("Updated " + rowsAffected + " row(s).");
-        } catch (Exception exception) {
-            System.out.println(exception);
-        } finally {
-            try {
-                if (statement != null) statement.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                System.out.println(e);
-            }
-        }
-    }
-
-    // Method to delete data from the table
-    public void deleteData(int id) {
-        Connection connection = null;
-        Statement statement = null;
-
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/sakila",
-                "root", "system");
-
-            statement = connection.createStatement();
-            int rowsAffected = statement.executeUpdate(
-                "DELETE FROM con1 WHERE id=" + id);
-
-            System.out.println("Deleted " + rowsAffected + " row(s).");
-        } catch (Exception exception) {
-            System.out.println(exception);
-        } finally {
-            try {
-                if (statement != null) statement.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                System.out.println(e);
-            }
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Scanner;
 
-public class DatabaseNavigation {
+public class jdbc {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/student_db";
-    private static final String USER = "root"; // MySQL username
-    private static final String PASSWORD = ""; // MySQL password
+    private static final String URL = "jdbc:mysql://localhost:3307/te31252_db";
+    private static final String USER = "root"; //username
+    private static final String PASSWORD = "pvs076567"; //password
 
     public static void main(String[] args) {
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            Scanner sc = new Scanner(System.in);
-            boolean exit = false;
-            while (!exit) {
-                System.out.println("Choose Operation: 1. Add Student, 2. Edit Student, 3. Delete Student, 4. View Students, 5. Exit");
-                int choice = sc.nextInt();
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             Scanner scanner = new Scanner(System.in)) {
+            System.out.println("Connected to the database.");
+
+            while (true) {
+                System.out.println("\nChoose an operation:");
+                System.out.println("1. Add User");
+                System.out.println("2. View Users");
+                System.out.println("3. Update User");
+                System.out.println("4. Delete User");
+                System.out.println("5. Exit");
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                if (choice == 5) {
+                    System.out.println("Exiting...");
+                    break;
+                }
+
                 switch (choice) {
                     case 1:
-                        addStudent(conn, sc);
+                        System.out.print("Enter name: ");
+                        String name = scanner.nextLine();
+                        System.out.print("Enter email: ");
+                        String email = scanner.nextLine();
+                        String insertSQL = "INSERT INTO users (name, email) VALUES (?, ?)";
+                        try (PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
+                            pstmt.setString(1, name);
+                            pstmt.setString(2, email);
+                            pstmt.executeUpdate();
+                            System.out.println("User added successfully.");
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                         break;
+
                     case 2:
-                        editStudent(conn, sc);
+                        String selectSQL = "SELECT * FROM users";
+                        try (Statement stmt = conn.createStatement();
+                             ResultSet rs = stmt.executeQuery(selectSQL)) {
+                            System.out.println("Users:");
+                            while (rs.next()) {
+                                System.out.println(rs.getInt("id") + ": " + rs.getString("name") + " (" + rs.getString("email") + ")");
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                         break;
+
                     case 3:
-                        deleteStudent(conn, sc);
+                        System.out.print("Enter user ID to update: ");
+                        int idToUpdate = scanner.nextInt();
+                        scanner.nextLine();
+                        System.out.print("Enter new name: ");
+                        String newName = scanner.nextLine();
+                        System.out.print("Enter new email: ");
+                        String newEmail = scanner.nextLine();
+                        String updateSQL = "UPDATE users SET name = ?, email = ? WHERE id = ?";
+                        try (PreparedStatement pstmt = conn.prepareStatement(updateSQL)) {
+                            pstmt.setString(1, newName);
+                            pstmt.setString(2, newEmail);
+                            pstmt.setInt(3, idToUpdate);
+                            int rowsAffected = pstmt.executeUpdate();
+                            System.out.println(rowsAffected > 0 ? "User updated successfully." : "User not found.");
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                         break;
+
                     case 4:
-                        viewStudents(conn);
+                        System.out.print("Enter user ID to delete: ");
+                        int idToDelete = scanner.nextInt();
+                        String deleteSQL = "DELETE FROM users WHERE id = ?";
+                        try (PreparedStatement pstmt = conn.prepareStatement(deleteSQL)) {
+                            pstmt.setInt(1, idToDelete);
+                            int rowsAffected = pstmt.executeUpdate();
+                            System.out.println(rowsAffected > 0 ? "User deleted successfully." : "User not found.");
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                         break;
-                    case 5:
-                        exit = true;
-                        break;
+
                     default:
-                        System.out.println("Invalid choice!");
+                        System.out.println("Invalid choice. Try again.");
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-    // Add student to the database
-    public static void addStudent(Connection conn, Scanner sc) throws SQLException {
-        System.out.println("Enter student name: ");
-        String name = sc.next();
-        System.out.println("Enter total marks: ");
-        int marks = sc.nextInt();
-
-        String sql = "INSERT INTO student (name, total_marks) VALUES (?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, name);
-            stmt.setInt(2, marks);
-            int rowsInserted = stmt.executeUpdate();
-            if (rowsInserted > 0) {
-                System.out.println("Student added successfully.");
-            }
-        }
-    }
-
-    // Edit student details in the database
-    public static void editStudent(Connection conn, Scanner sc) throws SQLException {
-        System.out.println("Enter student ID to edit: ");
-        int id = sc.nextInt();
-        System.out.println("Enter new name: ");
-        String name = sc.next();
-        System.out.println("Enter new total marks: ");
-        int marks = sc.nextInt();
-
-        String sql = "UPDATE student SET name = ?, total_marks = ? WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, name);
-            stmt.setInt(2, marks);
-            stmt.setInt(3, id);
-            int rowsUpdated = stmt.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("Student updated successfully.");
-            } else {
-                System.out.println("Student not found.");
-            }
-        }
-    }
-
-    // Delete student from the database
-    public static void deleteStudent(Connection conn, Scanner sc) throws SQLException {
-        System.out.println("Enter student ID to delete: ");
-        int id = sc.nextInt();
-
-        String sql = "DELETE FROM student WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            int rowsDeleted = stmt.executeUpdate();
-            if (rowsDeleted > 0) {
-                System.out.println("Student deleted successfully.");
-            } else {
-                System.out.println("Student not found.");
-            }
-        }
-    }
-
-    // View all students in the database
-    public static void viewStudents(Connection conn) throws SQLException {
-        String sql = "SELECT * FROM student";
-        try (PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            System.out.println("ID\tName\tTotal Marks");
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                int marks = rs.getInt("total_marks");
-                System.out.println(id + "\t" + name + "\t" + marks);
-            }
-        }
-    }
 }
 
 
@@ -293,14 +113,36 @@ public class DatabaseNavigation {
 
 
 
+mysql> create Table users (id int auto_increment primary key, name varchar(20), email varchar(20));
+Query OK, 0 rows affected (0.03 sec)
 
+mysql> select * from users;
++----+---------+---------------+
+| id | name    | email         |
++----+---------+---------------+
+|  1 | Pornima | p25@gmail.com |
++----+---------+---------------+
+1 row in set (0.00 sec)
 
+mysql> select * from users;
++----+---------+------------------+
+| id | name    | email            |
++----+---------+------------------+
+|  1 | Pornima | p25@gmail.com    |
+|  2 | Rutuja  | rutu19@gmail.com |
++----+---------+------------------+
+2 rows in set (0.00 sec)
 
+mysql> select * from users;
++----+---------+---------------+
+| id | name    | email         |
++----+---------+---------------+
+|  1 | Pornima | p25@gmail.com |
+|  2 | Dhanu   | dpp@gmail.com |
++----+---------+---------------+
+2 rows in set (0.00 sec)
 
-
-
-
-
+mysql>
 
 
 

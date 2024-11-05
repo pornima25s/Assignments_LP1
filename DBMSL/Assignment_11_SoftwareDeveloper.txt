@@ -1,0 +1,810 @@
+for software developer
+
+
+
+
+
+MapReduce in MongoDB is a powerful tool for data aggregation, processing, and transformation, particularly useful for handling large datasets. It processes data in two stages, map and reduce, enabling more complex operations than the basic aggregation pipeline.
+
+Let's go through using MapReduce from scratch with a practical example relevant to a software development context. This will involve creating a projects collection, inserting sample documents, and performing various MapReduce operations.
+
+Step 1: Create the projects Collection
+First, create the projects collection if it’s not already created:
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+db.createCollection("projects")
+
+-------------------------------------------------------------------------------------------------------------------------
+
+db.projects.insertMany([
+  {
+    "projectName": "Project A",
+    "team": "Development",
+    "budget": 20000,
+    "members": [
+      { "name": "Alice", "role": "Developer", "hoursWorked": 120 },
+      { "name": "Bob", "role": "Tester", "hoursWorked": 80 }
+    ]
+  },
+  {
+    "projectName": "Project B",
+    "team": "Development",
+    "budget": 30000,
+    "members": [
+      { "name": "Charlie", "role": "Developer", "hoursWorked": 150 },
+      { "name": "David", "role": "Tester", "hoursWorked": 70 }
+    ]
+  },
+  {
+    "projectName": "Project C",
+    "team": "Design",
+    "budget": 25000,
+    "members": [
+      { "name": "Eve", "role": "Designer", "hoursWorked": 110 },
+      { "name": "Frank", "role": "Tester", "hoursWorked": 90 }
+    ]
+  }
+])
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+Step 3: Define Map and Reduce Functions
+In MapReduce, we define two functions:
+
+Map Function: Processes each document and emits key-value pairs.
+Reduce Function: Combines values associated with each key produced by the Map function.
+Example Use Case: Calculate Total Budget by Team
+Here, we’ll write a MapReduce function to calculate the total budget allocated to each team.
+
+Map Function
+The Map function will emit each document’s team name as the key and its budget as the value:
+
+-------------------------------------------------------------------------------------------------------------------------
+
+var mapFunction = function() {
+  emit(this.team, this.budget);
+};
+
+-------------------------------------------------------------------------------------------------------------------------
+
+Reduce Function
+The Reduce function will sum the budgets for each team:
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+var reduceFunction = function(key, values) {
+  return Array.sum(values);
+};
+
+
+-------------------------------------------------------------------------------------------------------------------------
+Step 4: Execute MapReduce
+Run the MapReduce operation with the following command:
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+db.projects.mapReduce(
+  mapFunction,
+  reduceFunction,
+  { out: "total_budget_by_team" }
+)
+
+
+
+This command tells MongoDB to store the results of the MapReduce operation in a new collection called total_budget_by_team.
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+
+Step 5: View the Results
+You can view the results by querying the output collection:
+
+db.total_budget_by_team.find()
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+
+The output should look something like this:
+
+{ "_id" : "Development", "value" : 50000 }
+{ "_id" : "Design", "value" : 25000 }
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+Step 6: Additional MapReduce Examples
+Example 1: Calculate Total Hours Worked by Role
+You can also calculate the total hours worked by each role across projects.
+
+Map Function:
+
+
+var mapFunctionHours = function() {
+  this.members.forEach(member => {
+    emit(member.role, member.hoursWorked);
+  });
+};
+
+-------------------------------------------------------------------------------------------------------------------------
+Reduce Function:
+
+var reduceFunctionHours = function(key, values) {
+  return Array.sum(values);
+};
+
+-------------------------------------------------------------------------------------------------------------------------
+
+Execute MapReduce:
+
+db.projects.mapReduce(
+  mapFunctionHours,
+  reduceFunctionHours,
+  { out: "total_hours_by_role" }
+)
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+View Results:
+
+db.total_hours_by_role.find()
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+This will output the total hours worked by each role, such as:
+
+
+{ "_id" : "Developer", "value" : 270 }
+{ "_id" : "Tester", "value" : 240 }
+{ "_id" : "Designer", "value" : 110 }
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+
+Summary
+Here’s a quick recap of the steps for MapReduce in MongoDB:
+
+Define Map and Reduce Functions for your specific needs.
+Run MapReduce with db.collection.mapReduce(mapFunction, reduceFunction, { out: "outputCollectionName" }).
+View Results from the output collection or use inline output for immediate results without creating a new collection.
+Using these examples, you can effectively apply MapReduce for various data-processing tasks in MongoDB tailored for software development projects.
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+test> db.orders.find().pretty()
+[
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bf8'),
+    order_id: 201,
+    customer_name: 'Venkatesh Rao',
+    shipping_address: {
+      street: '123 MG Road',
+      city: 'Pune',
+      state: 'Maharashtra',
+      postal_code: 411001
+    },
+    items: [ { item_id: 1, product_name: 'Kurta', quantity: 2, price: 500 } ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bf9'),
+    order_id: 202,
+    customer_name: 'Aishwarya Deshmukh',
+    shipping_address: {
+      street: '456 Brigade Road',
+      city: 'Bengaluru',
+      state: 'Karnataka',
+      postal_code: 560001
+    },
+    items: [ { item_id: 2, product_name: 'Saree', quantity: 1, price: 1200 } ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bfa'),
+    order_id: 203,
+    customer_name: 'Lakshmi Menon',
+    shipping_address: {
+      street: '789 MG Road',
+      city: 'Chennai',
+      state: 'Tamil Nadu',
+      postal_code: 600002
+    },
+    items: [ { item_id: 3, product_name: 'Mundu', quantity: 3, price: 800 } ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bfb'),
+    order_id: 204,
+    customer_name: 'Satyendra Tripathi',
+    shipping_address: {
+      street: '12 Connaught Place',
+      city: 'Delhi',
+      state: 'Delhi',
+      postal_code: 110001
+    },
+    items: [
+      {
+        item_id: 4,
+        product_name: 'Sherwani',
+        quantity: 1,
+        price: 5000
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bfc'),
+    order_id: 205,
+    customer_name: 'Radha Gupta',
+    shipping_address: {
+      street: '34 Laxmi Nagar',
+      city: 'Kanpur',
+      state: 'Uttar Pradesh',
+      postal_code: 208001
+    },
+    items: [
+      {
+        item_id: 5,
+        product_name: 'Chikankari Dress',
+        quantity: 2,
+        price: 1500
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bfd'),
+    order_id: 206,
+    customer_name: 'Rajesh Patel',
+    shipping_address: {
+      street: '567 Civil Lines',
+      city: 'Ahmedabad',
+      state: 'Gujarat',
+      postal_code: 380001
+    },
+    items: [ { item_id: 6, product_name: 'Dhoti', quantity: 3, price: 400 } ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bfe'),
+    order_id: 207,
+    customer_name: 'Kavita Iyer',
+    shipping_address: {
+      street: '890 MG Road',
+      city: 'Coimbatore',
+      state: 'Tamil Nadu',
+      postal_code: 641001
+    },
+    items: [
+      { item_id: 7, product_name: 'Pavadai', quantity: 2, price: 700 }
+    ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73bff'),
+    order_id: 208,
+    customer_name: 'Narendra Joshi',
+    shipping_address: {
+      street: '123 FC Road',
+      city: 'Pune',
+      state: 'Maharashtra',
+      postal_code: 411004
+    },
+    items: [
+      {
+        item_id: 8,
+        product_name: 'Nehru Jacket',
+        quantity: 1,
+        price: 2000
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73c00'),
+    order_id: 209,
+    customer_name: 'Manisha Singh',
+    shipping_address: {
+      street: '234 Park Street',
+      city: 'Kolkata',
+      state: 'West Bengal',
+      postal_code: 700017
+    },
+    items: [
+      {
+        item_id: 9,
+        product_name: 'Tant Saree',
+        quantity: 1,
+        price: 1800
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6706b63c9c1ef6836ac73c01'),
+    order_id: 210,
+    customer_name: 'Dhanvantari Pawar',
+    shipping_address: {
+      street: '567 Residency Road',
+      city: 'Hyderabad',
+      state: 'Telangana',
+      postal_code: 500001
+    },
+    items: [
+      {
+        item_id: 10,
+        product_name: 'Pochampally Saree',
+        quantity: 2,
+        price: 3500
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6706b93c9c1ef6836ac73c02'),
+    order_id: 211,
+    customer_name: 'Ankita Verma',
+    shipping_address: {
+      street: '78 Green Park',
+      city: 'New Delhi',
+      state: 'Delhi',
+      postal_code: 110016
+    },
+    items: [
+      {
+        item_id: 11,
+        product_name: 'Lehenga',
+        quantity: 1,
+        price: 3500
+      },
+      { item_id: 12, product_name: 'Dupatta', quantity: 2, price: 600 }
+    ]
+  },
+  {
+    _id: ObjectId('6706b93c9c1ef6836ac73c03'),
+    order_id: 212,
+    customer_name: 'Rohit Sharma',
+    shipping_address: {
+      street: '34 Prabhat Road',
+      city: 'Pune',
+      state: 'Maharashtra',
+      postal_code: 411001
+    },
+    items: [
+      { item_id: 13, product_name: 'Blazer', quantity: 1, price: 4500 },
+      { item_id: 14, product_name: 'Tie', quantity: 3, price: 300 }
+    ]
+  },
+  {
+    _id: ObjectId('6706b93c9c1ef6836ac73c04'),
+    order_id: 213,
+    customer_name: 'Meera Naidu',
+    shipping_address: {
+      street: '91 Jubilee Hills',
+      city: 'Hyderabad',
+      state: 'Telangana',
+      postal_code: 500033
+    },
+    items: [
+      {
+        item_id: 15,
+        product_name: 'Anarkali Dress',
+        quantity: 1,
+        price: 5000
+      },
+      {
+        item_id: 16,
+        product_name: 'Jewelry Set',
+        quantity: 1,
+        price: 1500
+      }
+    ]
+  },
+  {
+    _id: ObjectId('6706b93c9c1ef6836ac73c05'),
+    order_id: 214,
+    customer_name: 'Sahil Kapoor',
+    shipping_address: {
+      street: '22 Karol Bagh',
+      city: 'New Delhi',
+      state: 'Delhi',
+      postal_code: 110005
+    },
+    items: [
+      { item_id: 17, product_name: 'Jeans', quantity: 2, price: 1200 },
+      { item_id: 18, product_name: 'T-shirt', quantity: 3, price: 800 }
+    ]
+  }
+]
+
+test> var mapFunction1 = function () {
+...   this.items.forEach(function (item) {
+...     emit(this.order_id, item.price * item.quantity);
+...   }, this);
+... };
+
+
+test> var reduceFunction1 = function (key, values) { return Array.sum(values); };
+
+test> db.orders.mapReduce( mapFunction1, reduceFunction1, { out: "map_reduce_example" } );
+{ result: 'map_reduce_example', ok: 1 }
+test> db.map_reduce_example.find().sort({_id:-1});
+[
+  { _id: 214, value: 4800 },
+  { _id: 213, value: 6500 },
+  { _id: 212, value: 5400 },
+  { _id: 211, value: 4700 },
+  { _id: 210, value: 7000 },
+  { _id: 209, value: 1800 },
+  { _id: 208, value: 2000 },
+  { _id: 207, value: 1400 },
+  { _id: 206, value: 1200 },
+  { _id: 205, value: 3000 },
+  { _id: 204, value: 5000 },
+  { _id: 203, value: 2400 },
+  { _id: 202, value: 1200 },
+  { _id: 201, value: 1000 }
+]
+
+test> var mapFunction2 = function () { this.items.forEach(function (item) { emit(this.order_id, item.price * item.quantity); }, this); };
+
+test> var reduceFunction2 = function (key, values) { return Array.avg(values); };
+
+test> db.orders.mapReduce( mapFunction2, reduceFunction2, { out: "map_reduce_example2" } );
+{ result: 'map_reduce_example2', ok: 1 }
+test> db.map_reduce_example2.find().sort({_id:-1});
+[
+  { _id: 214, value: 2400 },
+  { _id: 213, value: 3250 },
+  { _id: 212, value: 2700 },
+  { _id: 211, value: 2350 },
+  { _id: 210, value: 7000 },
+  { _id: 209, value: 1800 },
+  { _id: 208, value: 2000 },
+  { _id: 207, value: 1400 },
+  { _id: 206, value: 1200 },
+  { _id: 205, value: 3000 },
+  { _id: 204, value: 5000 },
+  { _id: 203, value: 2400 },
+  { _id: 202, value: 1200 },
+  { _id: 201, value: 1000 }
+]
+test>
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+//correct
+
+var mapFunction1 = function () {
+  if (this.items) {
+    this.items.forEach(function (item) {
+      emit(this.order_id, item.price * item.quantity);
+    }, this);
+  }
+};
+
+var reduceFunction1 = function (key, values) {
+  return Array.sum(values);
+};
+
+db.orders.mapReduce(mapFunction1, reduceFunction1, { out: "map_reduce_example" });
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+//another example
+
+Suppose you have an orders collection with documents like:
+
+{
+  "order_id": 1,
+  "items": [
+    { "product": "Laptop", "quantity": 2, "price": 800 },
+    { "product": "Phone", "quantity": 5, "price": 300 }
+  ]
+}
+
+
+*** Example: Calculate Total Revenue for Each Product
+
+
+
+student> var mapFunction = function() {
+...   if (this.items) {
+...     this.items.forEach(item => {
+...       emit(item.product, item.price * item.quantity);
+...     });
+...   }
+... };
+
+student> var reduceFunction = function(key, values) {
+...   return Array.sum(values);
+... };
+
+student> db.orders.mapReduce(mapFunction, reduceFunction, { out: "product_revenue" });
+{ result: 'product_revenue', ok: 1 }
+
+
+student> db.product_revenue.find()
+[
+  { _id: null, value: 74200 },
+  { _id: 'Phone', value: 1500 },
+  { _id: 'Laptop', value: 1600 }
+]
+student>
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------
+
+
+
+Here are some examples of mapReduce operations in MongoDB for different use cases:
+
+1. Counting Documents by a Field (e.g., Customer Orders)
+This example counts the total number of orders for each customer in a collection.
+
+Sample Data
+javascript
+Copy code
+{
+  "_id": 1,
+  "customer": "Alice",
+  "items": [{ "product": "Book", "quantity": 1, "price": 15 }]
+},
+{
+  "_id": 2,
+  "customer": "Bob",
+  "items": [{ "product": "Pen", "quantity": 3, "price": 5 }]
+},
+{
+  "_id": 3,
+  "customer": "Alice",
+  "items": [{ "product": "Notebook", "quantity": 2, "price": 7 }]
+}
+MapReduce Code
+javascript
+Copy code
+var mapFunction = function() {
+  emit(this.customer, 1); // Emit the customer name and count each order as 1
+};
+
+var reduceFunction = function(key, values) {
+  return Array.sum(values); // Sum up the values to get the total orders per customer
+};
+
+db.orders.mapReduce(mapFunction, reduceFunction, { out: "customer_order_count" });
+Result
+This will output a collection customer_order_count that shows the number of orders each customer has made:
+
+javascript
+Copy code
+{ "_id": "Alice", "value": 2 }
+{ "_id": "Bob", "value": 1 }
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+2. Calculating Total Sales per Product
+This example calculates the total revenue for each product based on its price and quantity sold.
+
+Sample Data
+javascript
+Copy code
+{
+  "product": "Laptop",
+  "quantity": 3,
+  "price": 1000
+},
+{
+  "product": "Laptop",
+  "quantity": 1,
+  "price": 1000
+},
+{
+  "product": "Mouse",
+  "quantity": 10,
+  "price": 25
+}
+MapReduce Code
+javascript
+Copy code
+var mapFunction = function() {
+  emit(this.product, this.price * this.quantity); // Emit product and revenue
+};
+
+var reduceFunction = function(key, values) {
+  return Array.sum(values); // Sum revenue for each product
+};
+
+db.sales.mapReduce(mapFunction, reduceFunction, { out: "total_sales_per_product" });
+Result
+This will output total_sales_per_product, showing total revenue for each product:
+
+javascript
+Copy code
+{ "_id": "Laptop", "value": 4000 }
+{ "_id": "Mouse", "value": 250 }
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+3. Average Age Calculation by Group
+This example calculates the average age of people in each city.
+
+Sample Data
+javascript
+Copy code
+{
+  "name": "John",
+  "city": "New York",
+  "age": 25
+},
+{
+  "name": "Jane",
+  "city": "New York",
+  "age": 30
+},
+{
+  "name": "Mike",
+  "city": "Los Angeles",
+  "age": 35
+}
+MapReduce Code
+javascript
+Copy code
+var mapFunction = function() {
+  emit(this.city, { count: 1, totalAge: this.age }); // Emit city with count and age
+};
+
+var reduceFunction = function(key, values) {
+  var result = { count: 0, totalAge: 0 };
+  values.forEach(value => {
+    result.count += value.count;
+    result.totalAge += value.totalAge;
+  });
+  return result;
+};
+
+var finalizeFunction = function(key, reducedValue) {
+  return reducedValue.totalAge / reducedValue.count; // Calculate average
+};
+
+db.people.mapReduce(mapFunction, reduceFunction, { out: "average_age_by_city", finalize: finalizeFunction });
+Result
+This outputs average_age_by_city showing the average age for each city:
+
+javascript
+Copy code
+{ "_id": "New York", "value": 27.5 }
+{ "_id": "Los Angeles", "value": 35 }
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+4. Word Count in a Collection of Texts
+This example counts the occurrence of each word in a collection of documents.
+
+Sample Data
+javascript
+Copy code
+{
+  "_id": 1,
+  "text": "hello world"
+},
+{
+  "_id": 2,
+  "text": "hello MongoDB"
+},
+{
+  "_id": 3,
+  "text": "world of MongoDB"
+}
+MapReduce Code
+javascript
+Copy code
+var mapFunction = function() {
+  var words = this.text.split(" ");
+  words.forEach(word => {
+    emit(word.toLowerCase(), 1); // Emit each word with a count of 1
+  });
+};
+
+var reduceFunction = function(key, values) {
+  return Array.sum(values); // Sum counts for each word
+};
+
+db.documents.mapReduce(mapFunction, reduceFunction, { out: "word_count" });
+Result
+This will create a word_count collection showing the frequency of each word:
+
+javascript
+Copy code
+{ "_id": "hello", "value": 2 }
+{ "_id": "world", "value": 2 }
+{ "_id": "mongodb", "value": 2 }
+{ "_id": "of", "value": 1 }
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+5. Finding the Maximum Price for Each Product
+This example finds the maximum price for each product.
+
+Sample Data
+javascript
+Copy code
+{
+  "product": "Laptop",
+  "price": 800
+},
+{
+  "product": "Laptop",
+  "price": 1000
+},
+{
+  "product": "Mouse",
+  "price": 20
+},
+{
+  "product": "Mouse",
+  "price": 25
+}
+MapReduce Code
+javascript
+Copy code
+var mapFunction = function() {
+  emit(this.product, this.price); // Emit product with its price
+};
+
+var reduceFunction = function(key, values) {
+  return Math.max.apply(null, values); // Find the maximum price
+};
+
+db.products.mapReduce(mapFunction, reduceFunction, { out: "max_price_per_product" });
+Result
+This outputs max_price_per_product showing the highest price for each product:
+
+javascript
+Copy code
+{ "_id": "Laptop", "value": 1000 }
+{ "_id": "Mouse", "value": 25 }
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

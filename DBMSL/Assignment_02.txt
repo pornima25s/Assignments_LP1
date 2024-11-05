@@ -4,6 +4,7 @@ ROLL NO.: 31160
 ----------------------------------------------------------------------
 
 -- Creating PlacementDrive table
+
 CREATE TABLE PlacementDrive (
     Drive_id INT PRIMARY KEY,
     Pcompany_name VARCHAR(100) NOT NULL,
@@ -12,14 +13,16 @@ CREATE TABLE PlacementDrive (
 );
 
 -- Creating Training table
+
 CREATE TABLE Training (
     T_id INT PRIMARY KEY,
     Tcompany_name VARCHAR(100) NOT NULL,
     T_Fee DECIMAL(10, 2) NOT NULL,
     T_year INT NOT NULL
 );
-
+kk
 -- Creating Student table
+
  CREATE TABLE Student (
     ->     s_id INT PRIMARY KEY,
     ->     Drive_id INT,
